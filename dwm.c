@@ -808,31 +808,27 @@ drawbars(void) {
 
 void
 drawcoloredtext(char *text) {
-	Bool first=True;
-	char *buf = text, *ptr = buf, c = 1;
+	char *buf = text, *ptr = buf;
 	unsigned long *col = dc.colors[0];
-	int i, ox = dc.x;
+	int i, ox;
+	dc.x += dc.font.height/2;
+	for( ; *ptr ; ptr++) {
+		if (*ptr > 0 && *ptr <= NUMCOLORS)
+			dc.x += textnw(ptr,1);
+	}
+	ox = dc.x;
+	ptr = buf;
 
 	while( *ptr ) {
 		for( i = 0; *ptr < 0 || *ptr > NUMCOLORS; i++, ptr++);
 		if( !*ptr ) break;
-		c=*ptr;
-		*ptr=0;
-		if( i ) {
-			dc.w = selmon->ww - dc.x;
-			drawtext(buf, col, first);
-			dc.x += textnw(buf, i) + textnw(&c,1);
-			if( first ) dc.x += ( dc.font.ascent + dc.font.descent ) / 2;
-			first = False;
-		} else if( first ) {
-			ox = dc.x += textnw(&c,1);
-		}
-		*ptr = c;
-		col = dc.colors[ c-1 ];
+		dc.w = selmon->ww - dc.x;
+		drawtext(buf, col, False);
+		dc.x += textnw(buf, i);
+		col = dc.colors[ *ptr-1 ];
 		buf = ++ptr;
 	}
-	if( !first ) dc.x-=(dc.font.ascent+dc.font.descent)/2;
-	drawtext(buf, col, True);
+	drawtext(buf, col, False);
 	dc.x = ox;
 }
 
