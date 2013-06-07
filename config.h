@@ -100,6 +100,8 @@ static const char *brightnessupcmd[]     = { "/home/jeffrey/bin/brighter", "+", 
 static const char *redshifttogglecmd[]   = { "/home/jeffrey/bin/redshift-toggle", NULL };
 static const char *autobrightnesscmd[]   = { "/home/jeffrey/bin/autobrightness", NULL };
 
+#include "selfrestart.c"
+
 static Key keys[] = {
 	/* modifier                               key              function        argument */
 	{ MODKEY,                                 XK_space,        spawn,          {.v = dmenucmd } },
@@ -164,6 +166,7 @@ static Key keys[] = {
 	TAGKEYS(                                  XK_7,                      6)
 	TAGKEYS(                                  XK_8,                      7)
 	TAGKEYS(                                  XK_9,                      8)
+	{ MODKEY|ShiftMask,                       XK_r,            self_restart,   {0} },
 	{ MODKEY|ShiftMask,                       XK_q,            quit,           {0} },
 };
 
