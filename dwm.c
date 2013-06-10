@@ -1279,7 +1279,7 @@ motionnotify(XEvent *e) {
 	if(ev->window != root)
 		return;
 	if((m = recttomon(ev->x_root, ev->y_root, 1, 1)) != mon && mon) {
-		selmon = m;
+		//selmon = m;
 		focus(NULL);
 	}
 	mon = m;
