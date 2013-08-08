@@ -116,6 +116,8 @@ static Key keys[] = {
 	{ 0,                                      0x1008ff12,      spawn,          {.v = volmutecmd } },
 
 	{ 0,                                      0x1008ff14,      spawn,          {.v = music_playpausecmd } },
+	{ 0,                                      0x1008ff14,      spawn,          {.v = music_playpausecmd } },
+	{ 0,                                      0x1008ff31,      spawn,          {.v = music_playpausecmd } },
 	{ 0,                                      0x1008ff16,      spawn,          {.v = music_prevcmd } },
 	{ 0,                                      0x1008ff17,      spawn,          {.v = music_nextcmd } },
 
