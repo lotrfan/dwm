@@ -4,31 +4,12 @@
 /* Custom font at beginning for dwmstatus output */
 static const char font[]            = "-*-stlarch-medium-r-*-*-10-*-*-*-*-*-*-*" "," "-*-terminus-medium-r-*-*-12-*-*-*-*-*-*-*";
 
-#define NUMCOLORS         16
-static const char colors[NUMCOLORS][ColLast][20] = {
-  // border   foreground background
-  { "#444444", "#bbbbbb", "#222222" },  // 1: normal (gray on black)
-  { "#005577", "#eeeeee", "#005577" },  // 2: selected (whitish on blue)
-  { "#ff0000", "#000000", "#ffff00" },  // 3: urgent/warning  (black on yellow)
-  { "#ff0000", "#ffffff", "#ff0000" },  // 4: error (white on red)
-
-  { "#444444", "#ffff11", "#222222" },  // 5: low (black on yellow)
-  { "#444444", "#ff1111", "#222222" },  // 6: high (black on red)
-
-  { "#ff0000", "#ffffff", "#ff0000" },  // 7:
-  { "#ff0000", "#ffffff", "#ff0000" },  // 8:
-  { "#ff0000", "#ffffff", "#ff0000" },  // 9:
-  { "#ff0000", "#ffffff", "#ff0000" },  // 10:
-  // Inverted (switch foreground/background colors) - are (# + 10)
-  { "#444444", "#222222", "#bbbbbb" },  // 11: un-normal (black on gray)
-  { "#005577", "#005577", "#eeeeee" },  // 12: un-selected (blue on white)
-  { "#ff0000", "#000000", "#ffff00" },  // 13: unused
-  { "#ff0000", "#ffffff", "#ff0000" },  // 14: unused
-
-  { "#444444", "#222222", "#ffff11" },  // 15: un-low
-  { "#444444", "#222222", "#ff1111" },  // 16: un-high
-  // add more here
-};
+static const char normbordercolor[] = "#444444";
+static const char normbgcolor[]     = "#222222";
+static const char normfgcolor[]     = "#bbbbbb";
+static const char selbordercolor[]  = "#005577";
+static const char selbgcolor[]      = "#005577";
+static const char selfgcolor[]      = "#eeeeee";
 
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
@@ -68,9 +49,9 @@ static const Layout layouts[] = {
 
 /* commands */
 /* dmenu-ish stuff */
-static const char *dmenucmd[]            = { "dmenu_run", "-fn", font, "-nb", colors[0][ColBG], "-nf", colors[0][ColFG],"-sb", colors[1][ColBG], "-sf", colors[1][ColFG], NULL };
-static const char *calccmd[]             = { "dmenu_calc", "-fn", font, "-nb", colors[0][ColBG], "-nf", colors[0][ColFG],"-sb", colors[1][ColBG], "-sf", colors[1][ColFG], NULL };
-static const char *passcmd[]             = { "/home/jeffrey/bin/pass_dmenu", "-fn", font, "-nb", colors[0][ColBG], "-nf", colors[0][ColFG],"-sb", colors[1][ColBG], "-sf", colors[1][ColFG], NULL };
+static const char *dmenucmd[]            = { "dmenu_run", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *calccmd[]             = { "dmenu_calc", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *passcmd[]             = { "/home/jeffrey/bin/pass_dmenu", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 /* Spawn clients                         = */
 static const char *termcmd[]             = { "urxvt", NULL };
 /* RANDR commands                        =
