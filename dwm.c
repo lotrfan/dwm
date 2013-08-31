@@ -2139,8 +2139,9 @@ ansicolor_getwidth(const char *buf) {
 	} else {
 		/* Need to rip out the escape sequences */
 		char *tmp;
-		const char *c, *pos;
+		const char *c;
 		int inescape = 0;
+		unsigned int pos = 0;
 		unsigned int width = 0;
 		tmp = (char*)malloc(strlen(buf) + 1);
 		if (tmp == NULL) {
@@ -2148,7 +2149,6 @@ ansicolor_getwidth(const char *buf) {
 			exit(1);
 		}
 		tmp[0] = '\0';
-		pos = buf;
 		for (c = buf; c != NULL && *c != '\0'; c ++) {
 			if (*c == '\033') {
 				if (*(c + 1) == '\0') {
@@ -2156,25 +2156,17 @@ ansicolor_getwidth(const char *buf) {
 					break;
 				}
 				if (*(c + 1) == '[') {
-					if (inescape) {
-						/* already in an escape... bad input! */
-					} else {
-						inescape = 1;
-						if ((c-1) - pos) {
-							/* Need to copy what was what was previous to the escape */
-							strncat(tmp, pos, (c-1) - pos);
-						}
-					}
+					inescape = 1;
 				}
 				// ??
 			} else if (inescape && (*c == 'm')) {
 				inescape = 0;
-				pos = c + 1;
+			} else if (!inescape) {
+				tmp[pos] = *c;
+				pos ++;
 			}
 		}
-		if (!inescape) {
-			strcat(tmp, pos); /* Copy the end of the string */
-		}
+		tmp[pos] = '\0';
 		width = TEXTW(tmp);
 		free(tmp);
 		return width;
