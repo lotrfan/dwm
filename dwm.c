@@ -66,6 +66,8 @@ enum { NetSupported, NetWMName, NetWMState,
 enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
 enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
        ClkClientWin, ClkRootWin, ClkLast }; /* clicks */
+enum { ansi_reset, ansi_fg, ansi_bg, ansi_text, ansi_last};
+
 
 typedef union {
 	int i;
@@ -140,6 +142,13 @@ typedef struct {
 	Bool isfloating;
 	int monitor;
 } Rule;
+
+struct ansi_node {
+	int type;
+	char *color;
+	char *text;
+	struct ansi_node *next;
+};
 
 /* function declarations */
 static void applyrules(Client *c);
@@ -233,6 +242,12 @@ static int xerror(Display *dpy, XErrorEvent *ee);
 static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
+static void ansicolor_ParseAnsiEsc(char *seq, char buffer[]);
+static void ansicolor_GetAnsiColor(int escapecode, char buffer[]);
+static int ansicolor_countchars(char c, char *buf);
+static struct ansi_node *ansicolor_addnode(struct ansi_node *head, int type, char *color, char *text);
+static void ansicolor_destroy_llist(struct ansi_node *head);
+
 
 /* variables */
 static const char broken[] = "broken";
@@ -2061,4 +2076,186 @@ main(int argc, char *argv[]) {
 	cleanup();
 	XCloseDisplay(dpy);
 	return EXIT_SUCCESS;
+}
+
+struct ansi_node *
+ansicolor_addnode(struct ansi_node *head, int type, char *color, char *text) {
+	struct ansi_node *tmp;
+	if (head == NULL) {
+		head = (struct ansi_node*)malloc(sizeof(struct ansi_node));
+		if (head == NULL) {
+			perror("ansicolor_addnode");
+			exit(1);
+		}
+		head->next = head;
+		head->type = type;
+		head->color = color;
+		head->text = text;
+	} else {
+		tmp = head;
+		while(tmp->next != head)
+			tmp = tmp->next;
+		tmp->next = (struct ansi_node*)malloc(sizeof(struct ansi_node));
+		if (tmp->next == NULL) {
+			perror("ansicolor_addnode");
+			exit(1);
+		}
+		tmp = tmp->next;
+		tmp->next = head;
+		tmp->type = type;
+		tmp->color = color;
+		tmp->text = text;
+	}
+	return head;
+}
+void
+ansicolor_destroy_llist(struct ansi_node *head) {
+	struct ansi_node *current, *tmp;
+	current = head->next;
+	head->next = NULL;
+	while (current != NULL) {
+		tmp = current->next;
+		free(current);
+		current = tmp;
+	}
+}
+int /* count occurrences of c in buf */
+ansicolor_countchars(char c, char * buf) {
+	char *ptr = buf;
+	int ctr = 0;
+	while(*ptr) {
+		if(*ptr == c) ctr++;
+		ptr++;
+	}
+	return ctr;
+}
+
+void
+ansicolor_ParseAnsiEsc(char *seq, char buffer[]) {
+	char *cp, *token;
+	static char *standardcolors[2][8] = {
+		{"#000000\0","#800000\0","#008000\0","#808000\0","#000080\0","#800080\0","#008080\0","#c0c0c0\0"},
+		{"#808080\0","#ff0000\0","#00ff00\0","#ffff00\0","#0000ff\0","#ff00ff\0","#00ffff\0","#ffffff\0"}
+	};
+	buffer[0] = '\0';
+
+	cp = (char*)malloc(strlen(seq) + 1);
+	if (cp == NULL) {
+		perror("ansicolor_ParseAnsiEsc");
+		exit(1);
+	}
+	strcpy(cp, seq);
+
+	int semis = ansicolor_countchars(';', seq);
+	char *delim = ";";
+	char *toklist[semis + 1];
+	int tok_ctr = 0;
+	int arglist[semis + 1];
+	int r, c, i, j;
+	char *layer;
+
+	token = strtok(cp, delim);
+	while(token) {
+		toklist[tok_ctr] = token;
+		tok_ctr ++;
+		token = strtok(NULL, delim);
+	}
+	if ((tok_ctr > 3) || (tok_ctr < 1)) {
+		free(cp);
+		return; /* Not a valid escape code */
+	}
+	if (tok_ctr == 1) { /* must be a reset */
+		if (strlen(toklist[0]) != 1) return;
+		if (toklist[0][0] == '0') {
+			sprintf(buffer, "r"); /* reset to default*/
+		}
+		free(cp);
+		return;
+	}
+	for (i = 0; i < tok_ctr; i++) {
+		for(j = 0; j < strlen(toklist[i]); j++){
+			if (toklist[i][j] < '0' || toklist[i][j] > '9') {
+				free(cp);
+				return;
+			}
+		}
+		arglist[i] = atoi(toklist[i]);
+	}
+	if (tok_ctr == 3) {
+		if (!(
+					(arglist[1] == 5) &&
+					((arglist[0] == 38) || (arglist[0] == 48)) &&
+					(arglist[2] >= 16) &&
+					(arglist[2] <= 255)
+			 )) {
+			free(cp);
+			return;
+		} else {
+			if (arglist[0] == 38) {
+				sprintf(buffer,"fg:");
+			} else {
+				sprintf(buffer,"bg:");
+			}
+
+			ansicolor_GetAnsiColor(arglist[2], buffer + strlen(buffer));
+			free(cp);
+			return;
+		}
+	} else { /* if tok_ctr == 2 */
+		if (!(
+					((arglist[0] == 0) || (arglist[0] == 1)) &&
+					(((arglist[1] >= 30) && (arglist[1] <= 37)) || ((arglist[1] >= 40) && (arglist[1] <= 47)))
+			 )) {
+			free(cp);
+			return;
+		}
+		r = arglist[0];
+		c = arglist[1];
+		if (c > 37) {
+			layer = "bg:";
+			c -= 10;
+		} else {
+			layer = "fg:";
+		}
+		sprintf(buffer, "%s%s", layer, standardcolors[r][c-30]);
+		free(cp);
+	}
+}
+
+void
+ansicolor_GetAnsiColor(int escapecode, char buffer[]){
+	char steps[6][3] = {
+		"00\0", "5f\0", "87\0", "af\0", "d6\0", "ff\0",
+	};
+	int i, panel, cell, col, row, val;
+	int cmin = 16;
+	int cmax = 231;
+	int gmax = 255;
+	int n = escapecode;
+
+	if (n < cmin) {
+		return;
+	} else if (n > gmax) {
+		return;
+	} else if (n <= cmax) {
+		i = n - 15;
+		panel = i / 36;
+		cell = i % 36;
+		if (cell == 0) {
+			cell = 36;
+			panel -= 1;
+		}
+		col = cell / 6;
+		row = cell % 6;
+		if (row == 0) {
+			col -= 1;
+			row = 5;
+		} else {
+			row -= 1;
+		}
+		sprintf(buffer, "#%s%s%s", steps[panel], steps[col], steps[row]);
+	} else {
+		val = ((10*(n-232))+8);
+		sprintf(buffer, "#%.2x%.2x%.2x",val,val,val);
+	}
 }
