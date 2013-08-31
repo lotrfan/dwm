@@ -249,6 +249,7 @@ static void ansicolor_GetAnsiColor(int escapecode, char buffer[]);
 static int ansicolor_countchars(char c, char *buf);
 static struct ansi_node *ansicolor_addnode(struct ansi_node *head, int type, char *color, char *text);
 static void ansicolor_destroy_llist(struct ansi_node *head);
+static void drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text);
 
 
 /* variables */
@@ -2305,4 +2306,82 @@ ansicolor_GetAnsiColor(int escapecode, char buffer[]){
 		val = ((10*(n-232))+8);
 		sprintf(buffer, "#%.2x%.2x%.2x", val, val, val);
 	}
+}
+
+unsigned long getcolor(char *col) {
+	unsigned int r, g, b;
+	sscanf(col, "#%2x%2x%2x", &r, &g, &b);
+	return ((unsigned long)r << 16) | ((unsigned long)g << 8) | (unsigned long)b;
+}
+
+void
+drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text) {
+	if(!drw || !drw->scheme)
+		return;
+
+	const unsigned long orig_fg = drw->scheme->fg->rgb;
+	const unsigned long orig_bg = drw->scheme->bg->rgb;
+	static char color[16];
+	static char tmp[STATUS_BUF_LEN] = {0};
+	const char *c;
+	const char *start; /* Where the text segment started */
+	int tmpw;
+
+	/* Simulate the padding found in drw_text */
+	x += (h / 2);
+
+	c = text;
+	start = text;
+	printf("======NEW\n");
+	while (c != NULL && *c != '\0') {
+		if (*c == '\033') {
+			/* Possibly the start of an escape sequence */
+			if (*(c + 1) == '[') { /* This can't go past the end of the string (although (c+1) might be the end of the string) */
+				char *mpos = strstr(c, "m");
+				if (mpos == NULL) {
+					// Can't find the end
+				} else {
+					// Draw the string
+					if ((c - start)) {
+						strncpy(tmp, start, c - start + 1);
+						tmp[c - start + 1] = '\0';
+						tmp[c - start] = '\0';
+						tmpw = drw_font_getexts_width(drw->font, tmp, strlen(tmp));
+						drw_text_noborder(drw, x, y, w, h, tmp, 0);
+						printf(" => '%s'\n", tmp);
+						x += tmpw + 0;
+						w -= tmpw;
+					}
+					start = mpos + 1;
+					strncpy(tmp, (c + 2), mpos - (c + 2));
+					tmp[mpos - (c + 2)] = '\0';
+					ansicolor_ParseAnsiEsc(tmp, color);
+					if (color[0] == 'r') {
+						drw->scheme->fg->rgb = orig_fg;
+						drw->scheme->bg->rgb = orig_bg;
+					} else if (color[0] == 'f') { //chops off 'fg:'
+						drw->scheme->fg->rgb = getcolor(&color[3]);
+					} else if (color[0] == 'b') {
+						drw->scheme->bg->rgb = getcolor(&color[3]);
+					}
+					printf(" ==> fg: #%06x ; bg: #%06x\n", drw->scheme->fg->rgb, drw->scheme->bg->rgb);
+					c = mpos;
+				}
+			} else {
+				// no escape sequence
+			}
+		}
+		c ++;
+	}
+	if ((c - start)) {
+		strncpy(tmp, start, c - start + 1);
+		tmp[c - start + 1] = '\0';
+		tmpw = drw_font_getexts_width(drw->font, tmp, strlen(tmp));
+		drw_text_noborder(drw, x, y, w, h, tmp, 0);
+		printf(" => '%s'\n", tmp);
+		x += tmpw;
+		w -= tmpw;
+	}
+	drw->scheme->fg->rgb = orig_fg;
+	drw->scheme->bg->rgb = orig_bg;
 }
