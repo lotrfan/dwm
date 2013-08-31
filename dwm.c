@@ -55,6 +55,7 @@
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
 #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
 #define TEXTW(X)                (drw_font_getexts_width(drw->font, X, strlen(X)) + drw->font->h)
+#define TEXTW_ANSIESCAPE(X)     (ansicolor_getwidth(X))
 #define STATUS_BUF_LEN          8192
 
 /* enums */
@@ -2128,6 +2129,55 @@ ansicolor_countchars(char c, char * buf) {
 		ptr++;
 	}
 	return ctr;
+}
+
+unsigned int
+ansicolor_getwidth(const char *buf) {
+    if (buf == NULL) {
+        return TEXTW(buf);
+    } else {
+        /* Need to rip out the escape sequences */
+        char *tmp;
+        const char *c, *pos;
+        int inescape = 0;
+        unsigned int width = 0;
+        tmp = (char*)malloc(strlen(buf) + 1);
+        if (tmp == NULL) {
+            perror("ansicolor_getwidth");
+            exit(1);
+        }
+        tmp[0] = '\0';
+        pos = buf;
+        for (c = buf; c != NULL && *c != '\0'; c ++) {
+            if (*c == '\033') {
+                if (*(c + 1) == '\0') {
+                    // end of string...
+                    break;
+                }
+                if (*(c + 1) == '[') {
+                    if (inescape) {
+                        /* already in an escape... bad input! */
+                    } else {
+                        inescape = 1;
+                        if ((c-1) - pos) {
+                            /* Need to copy what was what was previous to the escape */
+                            strncat(tmp, pos, (c-1) - pos);
+                        }
+                    }
+                }
+                // ??
+            } else if (inescape && (*c == ';')) {
+                inescape = 0;
+                pos = c + 1;
+            }
+        }
+        if (!inescape) {
+            strcat(tmp, pos); /* Copy the end of the string */
+        }
+        width = TEXTW(tmp);
+        free(tmp);
+        return width;
+    }
 }
 
 void
