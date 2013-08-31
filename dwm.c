@@ -2167,7 +2167,7 @@ ansicolor_ParseAnsiEsc(char *seq, char buffer[]) {
 	if (tok_ctr == 1) { /* must be a reset */
 		if (strlen(toklist[0]) != 1) return;
 		if (toklist[0][0] == '0') {
-			sprintf(buffer, "r"); /* reset to default*/
+			strcat(buffer, "r"); /* reset to default*/
 		}
 		free(cp);
 		return;
@@ -2192,9 +2192,9 @@ ansicolor_ParseAnsiEsc(char *seq, char buffer[]) {
 			return;
 		} else {
 			if (arglist[0] == 38) {
-				sprintf(buffer,"fg:");
+				strcat(buffer, "fg:");
 			} else {
-				sprintf(buffer,"bg:");
+				strcat(buffer, "bg:");
 			}
 
 			ansicolor_GetAnsiColor(arglist[2], buffer + strlen(buffer));
@@ -2212,12 +2212,12 @@ ansicolor_ParseAnsiEsc(char *seq, char buffer[]) {
 		r = arglist[0];
 		c = arglist[1];
 		if (c > 37) {
-			layer = "bg:";
+			strcat(buffer, "bg:");
 			c -= 10;
 		} else {
-			layer = "fg:";
+			strcat(buffer, "fg:");
 		}
-		sprintf(buffer, "%s%s", layer, standardcolors[r][c-30]);
+		strcat(buffer, standardcolors[r][c-30]);
 		free(cp);
 	}
 }
@@ -2232,6 +2232,8 @@ ansicolor_GetAnsiColor(int escapecode, char buffer[]){
 	int cmax = 231;
 	int gmax = 255;
 	int n = escapecode;
+
+	buffer[0] = '\0';
 
 	if (n < cmin) {
 		return;
@@ -2253,7 +2255,10 @@ ansicolor_GetAnsiColor(int escapecode, char buffer[]){
 		} else {
 			row -= 1;
 		}
-		sprintf(buffer, "#%s%s%s", steps[panel], steps[col], steps[row]);
+		strcat(buffer, "#");
+		strcat(buffer, steps[panel]);
+		strcat(buffer, steps[col]);
+		strcat(buffer, steps[row]);
 	} else {
 		val = ((10*(n-232))+8);
 		sprintf(buffer, "#%.2x%.2x%.2x",val,val,val);
