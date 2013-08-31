@@ -67,7 +67,6 @@ enum { NetSupported, NetWMName, NetWMState,
 enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
 enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
        ClkClientWin, ClkRootWin, ClkLast }; /* clicks */
-enum { ansi_reset, ansi_fg, ansi_bg, ansi_text, ansi_last};
 
 
 typedef union {
@@ -143,13 +142,6 @@ typedef struct {
 	Bool isfloating;
 	int monitor;
 } Rule;
-
-struct ansi_node {
-	int type;
-	char *color;
-	char *text;
-	struct ansi_node *next;
-};
 
 /* function declarations */
 static void applyrules(Client *c);
@@ -247,8 +239,6 @@ static unsigned int ansicolor_getwidth(const char *buf);
 static void ansicolor_ParseAnsiEsc(char *seq, int *reset, unsigned long *fg, unsigned long *bg);
 static void ansicolor_GetAnsiColor(int escapecode, unsigned long *col);
 static int ansicolor_countchars(char c, char *buf);
-static struct ansi_node *ansicolor_addnode(struct ansi_node *head, int type, char *color, char *text);
-static void ansicolor_destroy_llist(struct ansi_node *head);
 static void drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text);
 
 
@@ -2081,47 +2071,6 @@ main(int argc, char *argv[]) {
 	return EXIT_SUCCESS;
 }
 
-struct ansi_node *
-ansicolor_addnode(struct ansi_node *head, int type, char *color, char *text) {
-	struct ansi_node *tmp;
-	if (head == NULL) {
-		head = (struct ansi_node*)malloc(sizeof(struct ansi_node));
-		if (head == NULL) {
-			perror("ansicolor_addnode");
-			exit(1);
-		}
-		head->next = head;
-		head->type = type;
-		head->color = color;
-		head->text = text;
-	} else {
-		tmp = head;
-		while (tmp->next != head)
-			tmp = tmp->next;
-		tmp->next = (struct ansi_node*)malloc(sizeof(struct ansi_node));
-		if (tmp->next == NULL) {
-			perror("ansicolor_addnode");
-			exit(1);
-		}
-		tmp = tmp->next;
-		tmp->next = head;
-		tmp->type = type;
-		tmp->color = color;
-		tmp->text = text;
-	}
-	return head;
-}
-void
-ansicolor_destroy_llist(struct ansi_node *head) {
-	struct ansi_node *current, *tmp;
-	current = head->next;
-	head->next = NULL;
-	while (current != NULL) {
-		tmp = current->next;
-		free(current);
-		current = tmp;
-	}
-}
 int /* count occurrences of c in buf */
 ansicolor_countchars(char c, char * buf) {
 	char *ptr = buf;
