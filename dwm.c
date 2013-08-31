@@ -2332,7 +2332,6 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 
 	c = text;
 	start = text;
-	printf("======NEW\n");
 	while (c != NULL && *c != '\0') {
 		if (*c == '\033') {
 			/* Possibly the start of an escape sequence */
@@ -2348,7 +2347,6 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 						tmp[c - start] = '\0';
 						tmpw = drw_font_getexts_width(drw->font, tmp, strlen(tmp));
 						drw_text_noborder(drw, x, y, w, h, tmp, 0);
-						printf(" => '%s'\n", tmp);
 						x += tmpw + 0;
 						w -= tmpw;
 					}
@@ -2364,7 +2362,6 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 					} else if (color[0] == 'b') {
 						drw->scheme->bg->rgb = getcolor(&color[3]);
 					}
-					printf(" ==> fg: #%06x ; bg: #%06x\n", drw->scheme->fg->rgb, drw->scheme->bg->rgb);
 					c = mpos;
 				}
 			} else {
@@ -2378,7 +2375,6 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 		tmp[c - start + 1] = '\0';
 		tmpw = drw_font_getexts_width(drw->font, tmp, strlen(tmp));
 		drw_text_noborder(drw, x, y, w, h, tmp, 0);
-		printf(" => '%s'\n", tmp);
 		x += tmpw;
 		w -= tmpw;
 	}
