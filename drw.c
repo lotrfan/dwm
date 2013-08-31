@@ -172,6 +172,37 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 }
 
 void
+drw_text_noborder(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int invert) {
+	char buf[256];
+	int i, ty, th, len, olen;
+	Extnts tex;
+
+	if(!drw || !drw->scheme)
+		return;
+	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->fg->rgb : drw->scheme->bg->rgb);
+	XFillRectangle(drw->dpy, drw->drawable, drw->gc, x, y, w, h);
+	if(!text || !drw->font)
+		return;
+	olen = strlen(text);
+	drw_font_getexts(drw->font, text, olen, &tex);
+	th = drw->font->ascent + drw->font->descent;
+	ty = y + (h / 2) - (th / 2) + drw->font->ascent;
+	/* shorten text if necessary */
+	for(len = MIN(olen, sizeof buf); len && (tex.w > w - tex.h || w < tex.h); len--)
+		drw_font_getexts(drw->font, text, len, &tex);
+	if(!len)
+		return;
+	memcpy(buf, text, len);
+	if(len < olen)
+		for(i = len; i && i > len - 3; buf[--i] = '.');
+	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->bg->rgb : drw->scheme->fg->rgb);
+	if(drw->font->set)
+		XmbDrawString(drw->dpy, drw->drawable, drw->font->set, drw->gc, x, ty, buf, len);
+	else
+		XDrawString(drw->dpy, drw->drawable, drw->gc, x, ty, buf, len);
+}
+
+void
 drw_map(Drw *drw, Window win, int x, int y, unsigned int w, unsigned int h) {
 	if(!drw)
 		return;
