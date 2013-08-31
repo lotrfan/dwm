@@ -244,8 +244,8 @@ static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
 static unsigned int ansicolor_getwidth(const char *buf);
-static void ansicolor_ParseAnsiEsc(char *seq, char buffer[]);
-static void ansicolor_GetAnsiColor(int escapecode, char buffer[]);
+static void ansicolor_ParseAnsiEsc(char *seq, int *reset, unsigned long *fg, unsigned long *bg);
+static void ansicolor_GetAnsiColor(int escapecode, unsigned long *col);
 static int ansicolor_countchars(char c, char *buf);
 static struct ansi_node *ansicolor_addnode(struct ansi_node *head, int type, char *color, char *text);
 static void ansicolor_destroy_llist(struct ansi_node *head);
@@ -2175,13 +2175,12 @@ ansicolor_getwidth(const char *buf) {
 }
 
 void
-ansicolor_ParseAnsiEsc(char *seq, char buffer[]) {
+ansicolor_ParseAnsiEsc(char *seq, int *reset, unsigned long *fg, unsigned long *bg) {
 	char *cp, *token;
-	static char *standardcolors[2][8] = {
-		{"#000000\0","#800000\0","#008000\0","#808000\0","#000080\0","#800080\0","#008080\0","#c0c0c0\0"},
-		{"#808080\0","#ff0000\0","#00ff00\0","#ffff00\0","#0000ff\0","#ff00ff\0","#00ffff\0","#ffffff\0"}
+	static unsigned long standardcolors[2][8] = {
+		{0x000000,0x800000,0x008000,0x808000,0x000080,0x800080,0x008080,0xc0c0c0},
+		{0x808080,0xff0000,0x00ff00,0xffff00,0x0000ff,0xff00ff,0x00ffff,0xffffff}
 	};
-	buffer[0] = '\0';
 
 	cp = (char*)malloc(strlen(seq) + 1);
 	if (cp == NULL) {
@@ -2197,6 +2196,8 @@ ansicolor_ParseAnsiEsc(char *seq, char buffer[]) {
 	int arglist[semis + 1];
 	int r, c, i, j;
 
+	*reset = 0;
+
 	token = strtok(cp, delim);
 	while (token) {
 		toklist[tok_ctr] = token;
@@ -2210,7 +2211,7 @@ ansicolor_ParseAnsiEsc(char *seq, char buffer[]) {
 	if (tok_ctr == 1) { /* must be a reset */
 		if (strlen(toklist[0]) != 1) return;
 		if (toklist[0][0] == '0') {
-			strcat(buffer, "r"); /* reset to default*/
+			*reset = 1;
 		}
 		free(cp);
 		return;
@@ -2235,12 +2236,10 @@ ansicolor_ParseAnsiEsc(char *seq, char buffer[]) {
 			return;
 		} else {
 			if (arglist[0] == 38) {
-				strcat(buffer, "fg:");
+				ansicolor_GetAnsiColor(arglist[2], fg);
 			} else {
-				strcat(buffer, "bg:");
+				ansicolor_GetAnsiColor(arglist[2], bg);
 			}
-
-			ansicolor_GetAnsiColor(arglist[2], buffer + strlen(buffer));
 			free(cp);
 			return;
 		}
@@ -2255,28 +2254,25 @@ ansicolor_ParseAnsiEsc(char *seq, char buffer[]) {
 		r = arglist[0];
 		c = arglist[1];
 		if (c > 37) {
-			strcat(buffer, "bg:");
 			c -= 10;
+			*bg = standardcolors[r][c-30];
 		} else {
-			strcat(buffer, "fg:");
+			*fg = standardcolors[r][c-30];
 		}
-		strcat(buffer, standardcolors[r][c-30]);
 		free(cp);
 	}
 }
 
 void
-ansicolor_GetAnsiColor(int escapecode, char buffer[]){
-	char steps[6][3] = {
-		"00\0", "5f\0", "87\0", "af\0", "d6\0", "ff\0",
+ansicolor_GetAnsiColor(int escapecode, unsigned long *color){
+	unsigned long steps[6] = {
+		0x00, 0x5f, 0x87, 0xaf, 0xd6, 0xff,
 	};
 	int i, panel, cell, col, row, val;
 	int cmin = 16;
 	int cmax = 231;
 	int gmax = 255;
 	int n = escapecode;
-
-	buffer[0] = '\0';
 
 	if (n < cmin) {
 		return;
@@ -2298,20 +2294,11 @@ ansicolor_GetAnsiColor(int escapecode, char buffer[]){
 		} else {
 			row -= 1;
 		}
-		strcat(buffer, "#");
-		strcat(buffer, steps[panel]);
-		strcat(buffer, steps[col]);
-		strcat(buffer, steps[row]);
+		*color = (steps[panel] << 16) | (steps[col] << 8) | (steps[row]);
 	} else {
 		val = ((10*(n-232))+8);
-		sprintf(buffer, "#%.2x%.2x%.2x", val, val, val);
+		*color = (val << 16) | (val << 8) | (val);
 	}
-}
-
-unsigned long getcolor(char *col) {
-	unsigned int r, g, b;
-	sscanf(col, "#%2x%2x%2x", &r, &g, &b);
-	return ((unsigned long)r << 16) | ((unsigned long)g << 8) | (unsigned long)b;
 }
 
 void
@@ -2321,10 +2308,10 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 
 	const unsigned long orig_fg = drw->scheme->fg->rgb;
 	const unsigned long orig_bg = drw->scheme->bg->rgb;
-	static char color[16];
 	static char tmp[STATUS_BUF_LEN] = {0};
 	const char *c;
 	const char *start; /* Where the text segment started */
+	int reset;
 	int tmpw;
 
 	/* Simulate the padding found in drw_text */
@@ -2353,14 +2340,10 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 					start = mpos + 1;
 					strncpy(tmp, (c + 2), mpos - (c + 2));
 					tmp[mpos - (c + 2)] = '\0';
-					ansicolor_ParseAnsiEsc(tmp, color);
-					if (color[0] == 'r') {
+					ansicolor_ParseAnsiEsc(tmp, &reset, &(drw->scheme->fg->rgb), &(drw->scheme->bg->rgb));
+					if (reset) {
 						drw->scheme->fg->rgb = orig_fg;
 						drw->scheme->bg->rgb = orig_bg;
-					} else if (color[0] == 'f') { //chops off 'fg:'
-						drw->scheme->fg->rgb = getcolor(&color[3]);
-					} else if (color[0] == 'b') {
-						drw->scheme->bg->rgb = getcolor(&color[3]);
 					}
 					c = mpos;
 				}
