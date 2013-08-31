@@ -2202,7 +2202,6 @@ ansicolor_ParseAnsiEsc(char *seq, char buffer[]) {
 	int tok_ctr = 0;
 	int arglist[semis + 1];
 	int r, c, i, j;
-	char *layer;
 
 	token = strtok(cp, delim);
 	while(token) {
