@@ -735,13 +735,13 @@ drawbar(Monitor *m) {
 	x += w;
 	xx = x;
 	if(m == selmon) { /* status is only drawn on selected monitor */
-		w = TEXTW(stext);
+		w = TEXTW_ANSIESCAPE(stext);
 		x = m->ww - w;
 		if(x < xx) {
 			x = xx;
 			w = m->ww - xx;
 		}
-		drw_text(drw, x, 0, w, bh, stext, 0);
+		drawstatus(drw, x, 0, w, bh, stext);
 	}
 	else
 		x = m->ww;
