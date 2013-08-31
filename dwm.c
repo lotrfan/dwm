@@ -2166,7 +2166,7 @@ ansicolor_getwidth(const char *buf) {
 					}
 				}
 				// ??
-			} else if (inescape && (*c == ';')) {
+			} else if (inescape && (*c == 'm')) {
 				inescape = 0;
 				pos = c + 1;
 			}
