@@ -2094,7 +2094,7 @@ ansicolor_addnode(struct ansi_node *head, int type, char *color, char *text) {
 		head->text = text;
 	} else {
 		tmp = head;
-		while(tmp->next != head)
+		while (tmp->next != head)
 			tmp = tmp->next;
 		tmp->next = (struct ansi_node*)malloc(sizeof(struct ansi_node));
 		if (tmp->next == NULL) {
@@ -2124,8 +2124,8 @@ int /* count occurrences of c in buf */
 ansicolor_countchars(char c, char * buf) {
 	char *ptr = buf;
 	int ctr = 0;
-	while(*ptr) {
-		if(*ptr == c) ctr++;
+	while (*ptr) {
+		if (*ptr == c) ctr++;
 		ptr++;
 	}
 	return ctr;
@@ -2133,51 +2133,51 @@ ansicolor_countchars(char c, char * buf) {
 
 unsigned int
 ansicolor_getwidth(const char *buf) {
-    if (buf == NULL) {
-        return TEXTW(buf);
-    } else {
-        /* Need to rip out the escape sequences */
-        char *tmp;
-        const char *c, *pos;
-        int inescape = 0;
-        unsigned int width = 0;
-        tmp = (char*)malloc(strlen(buf) + 1);
-        if (tmp == NULL) {
-            perror("ansicolor_getwidth");
-            exit(1);
-        }
-        tmp[0] = '\0';
-        pos = buf;
-        for (c = buf; c != NULL && *c != '\0'; c ++) {
-            if (*c == '\033') {
-                if (*(c + 1) == '\0') {
-                    // end of string...
-                    break;
-                }
-                if (*(c + 1) == '[') {
-                    if (inescape) {
-                        /* already in an escape... bad input! */
-                    } else {
-                        inescape = 1;
-                        if ((c-1) - pos) {
-                            /* Need to copy what was what was previous to the escape */
-                            strncat(tmp, pos, (c-1) - pos);
-                        }
-                    }
-                }
-                // ??
-            } else if (inescape && (*c == ';')) {
-                inescape = 0;
-                pos = c + 1;
-            }
-        }
-        if (!inescape) {
-            strcat(tmp, pos); /* Copy the end of the string */
-        }
-        width = TEXTW(tmp);
-        free(tmp);
-        return width;
-    }
+	if (buf == NULL) {
+		return TEXTW(buf);
+	} else {
+		/* Need to rip out the escape sequences */
+		char *tmp;
+		const char *c, *pos;
+		int inescape = 0;
+		unsigned int width = 0;
+		tmp = (char*)malloc(strlen(buf) + 1);
+		if (tmp == NULL) {
+			perror("ansicolor_getwidth");
+			exit(1);
+		}
+		tmp[0] = '\0';
+		pos = buf;
+		for (c = buf; c != NULL && *c != '\0'; c ++) {
+			if (*c == '\033') {
+				if (*(c + 1) == '\0') {
+					// end of string...
+					break;
+				}
+				if (*(c + 1) == '[') {
+					if (inescape) {
+						/* already in an escape... bad input! */
+					} else {
+						inescape = 1;
+						if ((c-1) - pos) {
+							/* Need to copy what was what was previous to the escape */
+							strncat(tmp, pos, (c-1) - pos);
+						}
+					}
+				}
+				// ??
+			} else if (inescape && (*c == ';')) {
+				inescape = 0;
+				pos = c + 1;
+			}
+		}
+		if (!inescape) {
+			strcat(tmp, pos); /* Copy the end of the string */
+		}
+		width = TEXTW(tmp);
+		free(tmp);
+		return width;
+	}
 }
 
 void
@@ -2204,7 +2204,7 @@ ansicolor_ParseAnsiEsc(char *seq, char buffer[]) {
 	int r, c, i, j;
 
 	token = strtok(cp, delim);
-	while(token) {
+	while (token) {
 		toklist[tok_ctr] = token;
 		tok_ctr ++;
 		token = strtok(NULL, delim);
@@ -2222,7 +2222,7 @@ ansicolor_ParseAnsiEsc(char *seq, char buffer[]) {
 		return;
 	}
 	for (i = 0; i < tok_ctr; i++) {
-		for(j = 0; j < strlen(toklist[i]); j++){
+		for (j = 0; j < strlen(toklist[i]); j++){
 			if (toklist[i][j] < '0' || toklist[i][j] > '9') {
 				free(cp);
 				return;
@@ -2310,6 +2310,6 @@ ansicolor_GetAnsiColor(int escapecode, char buffer[]){
 		strcat(buffer, steps[row]);
 	} else {
 		val = ((10*(n-232))+8);
-		sprintf(buffer, "#%.2x%.2x%.2x",val,val,val);
+		sprintf(buffer, "#%.2x%.2x%.2x", val, val, val);
 	}
 }
