@@ -243,6 +243,7 @@ static int xerror(Display *dpy, XErrorEvent *ee);
 static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
+static unsigned int ansicolor_getwidth(const char *buf);
 static void ansicolor_ParseAnsiEsc(char *seq, char buffer[]);
 static void ansicolor_GetAnsiColor(int escapecode, char buffer[]);
 static int ansicolor_countchars(char c, char *buf);
