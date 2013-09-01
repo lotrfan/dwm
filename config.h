@@ -86,6 +86,11 @@ static const char *brightnessupcmd[]     = { "/home/jeffrey/bin/brighter", "+", 
 static const char *redshifttogglecmd[]   = { "/home/jeffrey/bin/redshift-toggle", NULL };
 static const char *autobrightnesscmd[]   = { "/home/jeffrey/bin/autobrightness", NULL };
 
+void self_restart(const Arg *arg) {
+    char * const argv[] = {"/usr/bin/dwm", NULL};
+    execv(argv[0], argv);
+}
+
 static Key keys[] = {
 	/* modifier                               key              function        argument */
 	{ MODKEY,                                 XK_space,        spawn,          {.v = dmenucmd } },
@@ -157,6 +162,7 @@ static Key keys[] = {
 	TAGKEYS(                                  XK_8,                      7)
 	TAGKEYS(                                  XK_9,                      8)
 	{ MODKEY|ControlMask|ShiftMask,           XK_q,            quit,           {0} },
+	{ MODKEY|ControlMask|ShiftMask,           XK_r,            self_restart,           {0} },
 };
 
 /* button definitions */
