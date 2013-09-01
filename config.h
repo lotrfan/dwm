@@ -119,7 +119,7 @@ static Key keys[] = {
 	{ Mod1Mask|ControlMask|ShiftMask,         XK_l,            spawn,          {.v = locktogglecmd } },
 
 	{ MODKEY,                                 XK_b,            togglebar,      {.i = 0} },
-	{ MODKEY,                                 XK_b,            togglebar,      {.i = 1} },
+	{ MODKEY,                                 XK_v,            togglebar,      {.i = 1} },
 	{ MODKEY,                                 XK_j,            focusstack,     {.i = +1 } },
 	{ Mod1Mask,                               XK_Tab,          focusstack,     {.i = +1} },
 	{ MODKEY,                                 XK_k,            focusstack,     {.i = -1 } },
