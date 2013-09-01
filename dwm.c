@@ -125,12 +125,14 @@ struct Monitor {
 	unsigned int sellt;
 	unsigned int tagset[2];
 	Bool showbar;
+	Bool showbbar;
 	Bool topbar;
 	Client *clients;
 	Client *sel;
 	Client *stack;
 	Monitor *next;
 	Window barwin;
+	Window bbarwin;
 	const Layout *lt[2];
 };
 
@@ -508,6 +510,8 @@ cleanupmon(Monitor *mon) {
 	}
 	XUnmapWindow(dpy, mon->barwin);
 	XDestroyWindow(dpy, mon->barwin);
+	XUnmapWindow(dpy, mon->bbarwin);
+	XDestroyWindow(dpy, mon->bbarwin);
 	free(mon);
 }
 
@@ -576,8 +580,10 @@ configurenotify(XEvent *e) {
 		if(updategeom() || dirty) {
 			drw_resize(drw, sw, bh);
 			updatebars();
-			for(m = mons; m; m = m->next)
-				XMoveResizeWindow(dpy, m->barwin, m->wx, m->by, m->ww, bh);
+			for(m = mons; m; m = m->next) {
+				XMoveResizeWindow(dpy, m->barwin, m->wx, 0, m->ww, bh);
+				XMoveResizeWindow(dpy, m->bbarwin, m->wx, m->wy + m->wh, m->ww, bh);
+            }
 			focus(NULL);
 			arrange(NULL);
 		}
@@ -647,6 +653,7 @@ createmon(void) {
 	m->mfact = mfact;
 	m->nmaster = nmaster;
 	m->showbar = showbar;
+	m->showbbar = showbbar;
 	m->topbar = topbar;
 	m->lt[0] = &layouts[0];
 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
@@ -1636,10 +1643,16 @@ tile(Monitor *m) {
 
 void
 togglebar(const Arg *arg) {
-	selmon->showbar = !selmon->showbar;
-	updatebarpos(selmon);
-	XMoveResizeWindow(dpy, selmon->barwin, selmon->wx, selmon->by, selmon->ww, bh);
-	arrange(selmon);
+    if (arg->i == 0) {
+        selmon->showbar = !selmon->showbar;
+        XMoveResizeWindow(dpy, selmon->barwin, selmon->wx, 0, selmon->ww, bh);
+    } else if (arg->i == 1) {
+        selmon->showbbar = !selmon->showbbar;
+        updatebarpos(selmon);
+        XMoveResizeWindow(dpy, selmon->bbarwin, selmon->wx, selmon->wy + selmon->wh, selmon->ww, bh);
+    }
+    updatebarpos(selmon);
+    arrange(selmon);
 }
 
 void
@@ -1739,13 +1752,20 @@ updatebars(void) {
 		.event_mask = ButtonPressMask|ExposureMask
 	};
 	for(m = mons; m; m = m->next) {
-		if (m->barwin)
-			continue;
-		m->barwin = XCreateWindow(dpy, root, m->wx, m->by, m->ww, bh, 0, DefaultDepth(dpy, screen),
-		                          CopyFromParent, DefaultVisual(dpy, screen),
-		                          CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
-		XDefineCursor(dpy, m->barwin, cursor[CurNormal]->cursor);
-		XMapRaised(dpy, m->barwin);
+		if (!m->barwin) {
+            m->barwin = XCreateWindow(dpy, root, m->wx, 0, m->ww, bh, 0, DefaultDepth(dpy, screen),
+                    CopyFromParent, DefaultVisual(dpy, screen),
+                    CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
+            XDefineCursor(dpy, m->barwin, cursor[CurNormal]->cursor);
+            XMapRaised(dpy, m->barwin);
+        }
+        if (!m->bbarwin) {
+            m->bbarwin = XCreateWindow(dpy, root, m->wx, m->wy + m->wh, m->ww, bh, 0, DefaultDepth(dpy, screen),
+                    CopyFromParent, DefaultVisual(dpy, screen),
+                    CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
+            XDefineCursor(dpy, m->bbarwin, cursor[CurNormal]->cursor);
+            XMapRaised(dpy, m->bbarwin);
+        }
 	}
 }
 
@@ -2000,7 +2020,7 @@ wintomon(Window w) {
 	if(w == root && getrootptr(&x, &y))
 		return recttomon(x, y, 1, 1);
 	for(m = mons; m; m = m->next)
-		if(w == m->barwin)
+		if(w == m->barwin || w == m->bbarwin)
 			return m;
 	if((c = wintoclient(w)))
 		return c->mon;

@@ -14,6 +14,7 @@ static const char selfgcolor[]      = "#eeeeee";
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const Bool showbar           = True;     /* False means no bar */
+static const Bool showbbar          = True;     /* False means no bar */
 static const Bool topbar            = True;     /* False means bottom bar */
 
 /* tagging */
@@ -117,7 +118,8 @@ static Key keys[] = {
 	{ Mod1Mask|ControlMask,                   XK_l,            spawn,          {.v = locknowcmd } },
 	{ Mod1Mask|ControlMask|ShiftMask,         XK_l,            spawn,          {.v = locktogglecmd } },
 
-	{ MODKEY,                                 XK_b,            togglebar,      {0} },
+	{ MODKEY,                                 XK_b,            togglebar,      {.i = 0} },
+	{ MODKEY,                                 XK_b,            togglebar,      {.i = 1} },
 	{ MODKEY,                                 XK_j,            focusstack,     {.i = +1 } },
 	{ Mod1Mask,                               XK_Tab,          focusstack,     {.i = +1} },
 	{ MODKEY,                                 XK_k,            focusstack,     {.i = -1 } },
