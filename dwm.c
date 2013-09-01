@@ -246,7 +246,8 @@ static void drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, c
 
 /* variables */
 static const char broken[] = "broken";
-static char stext[STATUS_BUF_LEN];
+static char stext[2*STATUS_BUF_LEN];
+static char bstext[STATUS_BUF_LEN];
 static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
 static int bh, blw = 0;      /* bar geometry */
@@ -755,6 +756,11 @@ drawbar(Monitor *m) {
 		}
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
+
+	x = 0;
+	drw_setscheme(drw, &scheme[SchemeNorm]);
+	drw_text(drw, 0, 0, m->mw, bh, NULL, 0); /* Clear the bar */
+	drawstatus(drw, x, 0, m->mw, bh, bstext);
 	drw_map(drw, m->bbarwin, 0, 0, m->ww, bh);
 }
 
@@ -1959,8 +1965,13 @@ updatetitle(Client *c) {
 
 void
 updatestatus(void) {
+	char *split = NULL;
 	if(!gettextprop(root, XA_WM_NAME, stext, sizeof(stext)))
 		strcpy(stext, "dwm-"VERSION);
+	if ((split = index(stext, '\1')) != NULL) {
+		strcpy(bstext, split + 1);
+		*split = '\0';
+	}
 	drawbar(selmon);
 }
 
