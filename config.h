@@ -2,7 +2,7 @@
 
 /* appearance */
 /* Custom font at beginning for dwmstatus output */
-static const char font[]            = "-*-lucidatpewriter-medium-r-*-*-12-*-*-*-*-*-*-*";
+static const char font[]            = "-*-terminus-medium-r-*-*-12-*-*-*-*-*-*-*";
 
 static const char normbordercolor[] = "#444444";
 static const char normbgcolor[]     = "#222222";
