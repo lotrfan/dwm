@@ -243,6 +243,8 @@ static void ansicolor_ParseAnsiEsc(char *seq, int *reset, unsigned long *fg, uns
 static void ansicolor_GetAnsiColor(int escapecode, unsigned long *col);
 static int ansicolor_countchars(char c, char *buf);
 static void drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text);
+static void pushup(const Arg *arg);
+static void pushdown(const Arg *arg);
 
 
 /* variables */
@@ -2447,4 +2449,63 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 	}
 	drw->scheme->fg->rgb = orig_fg;
 	drw->scheme->bg->rgb = orig_bg;
+}
+
+static Client *
+prevtiled(Client *c) {
+	Client *p, *r;
+
+	for(p = selmon->clients, r = NULL; p && p != c; p = p->next)
+		if(!p->isfloating && ISVISIBLE(p))
+			r = p;
+	return r;
+}
+
+static void
+pushup(const Arg *arg) {
+	Client *sel = selmon->sel;
+	Client *c;
+
+	if(!sel || sel->isfloating)
+		return;
+	if((c = prevtiled(sel))) {
+		/* attach before c */
+		detach(sel);
+		sel->next = c;
+		if(selmon->clients == c)
+			selmon->clients = sel;
+		else {
+			for(c = selmon->clients; c->next != sel->next; c = c->next);
+			c->next = sel;
+		}
+	} else {
+		/* move to the end */
+		for(c = sel; c->next; c = c->next);
+		detach(sel);
+		sel->next = NULL;
+		c->next = sel;
+	}
+	focus(sel);
+	arrange(selmon);
+}
+
+static void
+pushdown(const Arg *arg) {
+	Client *sel = selmon->sel;
+	Client *c;
+
+	if(!sel || sel->isfloating)
+		return;
+	if((c = nexttiled(sel->next))) {
+		/* attach after c */
+		detach(sel);
+		sel->next = c->next;
+		c->next = sel;
+	} else {
+		/* move to the front */
+		detach(sel);
+		attach(sel);
+	}
+	focus(sel);
+	arrange(selmon);
 }
