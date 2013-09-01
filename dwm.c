@@ -713,6 +713,8 @@ drawbar(Monitor *m) {
 	unsigned int i, occ = 0, urg = 0;
 	Client *c;
 
+	drw_setscheme(drw, &scheme[SchemeNorm]);
+	drw_text(drw, 0, 0, m->mw, bh, NULL, 0); /* Clear the bar */
 	for(c = m->clients; c; c = c->next) {
 		occ |= c->tags;
 		if(c->isurgent)
@@ -739,6 +741,7 @@ drawbar(Monitor *m) {
 			x = xx;
 			w = m->ww - xx;
 		}
+		drw_setscheme(drw, &scheme[SchemeNorm]);
 		drawstatus(drw, x, 0, w, bh, stext);
 	}
 	else
