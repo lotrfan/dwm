@@ -56,6 +56,7 @@ static char dmenumon[2]                  = "0"; /* component of dmenucmd, manipu
 static const char *dmenucmd[]            = { "dmenu_run", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *calccmd[]             = { "dmenu_calc", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *passcmd[]             = { "/home/jeffrey/bin/pass_dmenu", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *srcmd[]               = { "/home/jeffrey/bin/sr_dmenu", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 /* Spawn clients                         = */
 static const char *termcmd[]             = { "urxvt", NULL };
 /* RANDR commands                        =
@@ -90,6 +91,7 @@ static Key keys[] = {
 	{ MODKEY,                                 XK_space,        spawn,          {.v = dmenucmd } },
 	{ MODKEY,                                 XK_a,            spawn,          {.v = passcmd } },
 	{ MODKEY,                                 XK_c,            spawn,          {.v = calccmd } },
+	{ MODKEY,                                 XK_s,            spawn,          {.v = srcmd } },
 
 	{ MODKEY|ShiftMask,                       XK_Return,       spawn,          {.v = termcmd } },
 
