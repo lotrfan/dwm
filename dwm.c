@@ -1754,9 +1754,10 @@ updatebarpos(Monitor *m) {
 	m->wy = m->my;
 	m->wh = m->mh;
 	if(m->showbar) {
-		m->wh -= bh;
-		m->by = m->topbar ? m->wy : m->wy + m->wh;
-		m->wy = m->topbar ? m->wy + bh : m->wy;
+		m->wh -= 2*bh;
+		/*m->by = m->topbar ? m->wy : m->wy + m->wh;*/
+		m->by = m->wy;
+		m->wy = m->wy + bh;
 	}
 	else
 		m->by = -bh;
