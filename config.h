@@ -54,8 +54,8 @@ static const Layout layouts[] = {
 /* dmenu-ish stuff */
 static char dmenumon[2]                  = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[]            = { "dmenu_run", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *calccmd[]             = { "dmenu_calc", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *passcmd[]             = { "/home/jeffrey/bin/pass_dmenu", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *calccmd[]             = { "dmenu_calc", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *passcmd[]             = { "/home/jeffrey/bin/pass_dmenu", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 /* Spawn clients                         = */
 static const char *termcmd[]             = { "urxvt", NULL };
 /* RANDR commands                        =
