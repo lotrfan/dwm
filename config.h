@@ -2,7 +2,7 @@
 
 /* appearance */
 /* Custom font at beginning for dwmstatus output */
-static const char font[]            = "Terminus:pixelsize=14";
+static const char font[]            = "-*-terminus-medium-r-*-*-14-*-*-*-*-*-*-*";
 
 static const char normbordercolor[] = "#444444";
 static const char normbgcolor[]     = "#222222";
