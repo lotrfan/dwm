@@ -127,7 +127,6 @@ struct Monitor {
 	unsigned int tagset[2];
 	Bool showbar;
 	Bool showbbar;
-	Bool topbar;
 	Client *clients;
 	Client *sel;
 	Client *stack;
@@ -671,7 +670,6 @@ createmon(void) {
 	m->nmaster = nmaster;
 	m->showbar = showbar;
 	m->showbbar = showbbar;
-	m->topbar = topbar;
 	m->lt[0] = &layouts[0];
 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
