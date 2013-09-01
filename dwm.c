@@ -2037,6 +2037,8 @@ updatestatus(void) {
 	if ((split = index(stext, '\1')) != NULL) {
 		strcpy(bstext, split + 1);
 		*split = '\0';
+	} else {
+		bstext[0] = '\0';
 	}
 	drawbar(selmon);
 }
