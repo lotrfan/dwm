@@ -755,7 +755,6 @@ drawbar(Monitor *m) {
 		}
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
-	drw_map(drw, m->bbarwin, 0, 0, m->ww, bh);
 }
 
 void
