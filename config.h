@@ -20,7 +20,7 @@ static const Bool showbbar          = False;    /* False means no bar */
 static const Bool focusonwheelscroll = False;
 
 /* tagging */
-static const char *tags[] = { "\uE160", "2", "3", "4", "5", "6", "7", "8", "9" };
+static const char *tags[] = { "\uE16A", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
 	/* class      instance    title       tags mask     isfloating   monitor */
