@@ -34,11 +34,11 @@ static const Bool resizehints = False; /* True means respect size hints in tiled
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      tile },
-	{ "><>",      NULL },
+	{ "\xE002",      tile },
+	{ "\xE001",      NULL },
 	{ "[M]",      monocle },
-	{ "TTT",      bstack },
-	{ "===",      bstackhoriz },
+	{ "\xE003",      bstack },
+	{ "\xE004",      bstackhoriz },
 	{ NULL ,      NULL },
 };
 
