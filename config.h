@@ -111,7 +111,7 @@ static Key keys[] = {
 	{ 0                              , XF86XK_AudioMute        , spawn          , {.v = volmutecmd } }         ,
 
 	{ 0                              , XF86XK_AudioPlay        , spawn          , {.v = music_playpausecmd } } ,
-	//{ 0                            , 0x1008ff31              , spawn          , {.v = music_playpausecmd } } ,
+	{ 0                              , XF86XK_AudioPause       , spawn          , {.v = music_playpausecmd } } ,
 	{ 0                              , XF86XK_AudioPrev        , spawn          , {.v = music_prevcmd } }      ,
 	{ 0                              , XF86XK_AudioNext        , spawn          , {.v = music_nextcmd } }      ,
 
