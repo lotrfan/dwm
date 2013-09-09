@@ -94,6 +94,8 @@ void self_restart(const Arg *arg) {
     execv(argv[0], argv);
 }
 
+#include <X11/XF86keysym.h>
+
 static Key keys[] = {
 	/* modifier                               key              function        argument */
 	{ MODKEY,                                 XK_space,        spawn,          {.v = dmenucmd } },
@@ -104,19 +106,19 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,                       XK_Return,       spawn,          {.v = termcmd } },
 
 	/* Find keys with xev */
-	{ 0,                                      0x1008ff13,      spawn,          {.v = volupcmd } },
-	{ 0,                                      0x1008ff11,      spawn,          {.v = voldowncmd } },
-	{ 0,                                      0x1008ff12,      spawn,          {.v = volmutecmd } },
+	{ 0,                                      XF86XK_AudioRaiseVolume,      spawn,          {.v = volupcmd } },
+	{ 0,                                      XF86XK_AudioLowerVolume,      spawn,          {.v = voldowncmd } },
+	{ 0,                                      XF86XK_AudioMute,      spawn,          {.v = volmutecmd } },
 
-	{ 0,                                      0x1008ff14,      spawn,          {.v = music_playpausecmd } },
+	{ 0,                                      XF86XK_AudioPlay,      spawn,          {.v = music_playpausecmd } },
 	//{ 0,                                      0x1008ff31,      spawn,          {.v = music_playpausecmd } },
-	{ 0,                                      0x1008ff16,      spawn,          {.v = music_prevcmd } },
-	{ 0,                                      0x1008ff17,      spawn,          {.v = music_nextcmd } },
+	{ 0,                                      XF86XK_AudioPrev,      spawn,          {.v = music_prevcmd } },
+	{ 0,                                      XF86XK_AudioNext,      spawn,          {.v = music_nextcmd } },
 
-	{ 0,                                      0x1008ffa9,      spawn,          {.v = touchtogglecmd } },
+	{ 0,                                      XF86XK_TouchpadToggle,      spawn,          {.v = touchtogglecmd } },
 
-	{ 0,                                      0x1008ff1d,      spawn,          {.v = autobrightnesscmd } }, // calculator key
-	{ ControlMask,                            0x1008ff1d,      spawn,          {.v = redshifttogglecmd } }, // ctrl+calculator key
+	{ 0,                                      XF86XK_Calculator,      spawn,          {.v = autobrightnesscmd } }, // calculator key
+	{ ControlMask,                            XF86XK_Calculator,      spawn,          {.v = redshifttogglecmd } }, // ctrl+calculator key
 	{ Mod4Mask,                               XK_Down,         spawn,          {.v = brightnessdowncmd } },
 	{ Mod4Mask,                               XK_Up,           spawn,          {.v = brightnessupcmd } },
 
