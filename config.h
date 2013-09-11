@@ -2,19 +2,23 @@
 
 /* appearance */
 /* Custom font at beginning for dwmstatus output */
-static const char font[]            = "-*-stlarch-medium-r-*-*-10-*-*-*-*-*-*-*" "," "-*-terminus-medium-r-*-*-12-*-*-*-*-*-*-*";
+static const char fonts[][150]            = {
+    "-*-stlarch-medium-r-*-*-10-*-*-*-*-*-*-*" "," "-*-profont-*-*-*-*-12-*-*-*-*-*-*-*",
+    "-*-stlarch-medium-r-*-*-10-*-*-*-*-*-*-*" "," "-*-terminus-medium-r-*-*-12-*-*-*-*-*-*-*",
+    "-*-stlarch-medium-r-*-*-10-*-*-*-*-*-*-*" "," "-*-terminus-medium-r-*-*-13-*-*-*-*-*-*-*",
+};
+static       char font[sizeof(fonts[0])]  = "";
+static const char normbordercolor[]       = "#444444";
+static const char normbgcolor[]           = "#222222";
+static const char normfgcolor[]           = "#bbbbbb";
+static const char selbordercolor[]        = "#005577";
+static const char selbgcolor[]            = "#005577";
+static const char selfgcolor[]            = "#eeeeee";
 
-static const char normbordercolor[] = "#444444";
-static const char normbgcolor[]     = "#222222";
-static const char normfgcolor[]     = "#bbbbbb";
-static const char selbordercolor[]  = "#005577";
-static const char selbgcolor[]      = "#005577";
-static const char selfgcolor[]      = "#eeeeee";
-
-static const unsigned int borderpx  = 1;        /* border pixel of windows */
-static const unsigned int snap      = 32;       /* snap pixel */
-static const Bool showbar           = True;     /* False means no bar */
-static const Bool showbbar          = False;    /* False means no bar */
+static const unsigned int borderpx        = 1;        /* border pixel of windows */
+static const unsigned int snap            = 32;       /* snap pixel */
+static const Bool showbar                 = True;     /* False means no bar */
+static const Bool showbbar                = False;    /* False means no bar */
 
 /* False means using the scroll wheel on a window will not change focus */
 static const Bool focusonwheelscroll = False;
@@ -127,6 +131,9 @@ static Key keys[] = {
 	{ Mod4Mask                       , XK_KP_Add               , spawn          , {.v = nextmodecmd } }        ,
 	{ Mod4Mask                       , XK_KP_Subtract          , spawn          , {.v = prevmodecmd } }        ,
 	{ Mod4Mask                       , XK_KP_Multiply          , spawn          , {.v = defaultmodecmd } }     ,
+	{ Mod4Mask|ControlMask           , XK_KP_Add               , font_next      , {.i = +1 } }                 ,
+	{ Mod4Mask|ControlMask           , XK_KP_Subtract          , font_next      , {.i = -1 } }                 ,
+
 
 	{ Mod1Mask|ControlMask           , XK_l                    , spawn          , {.v = locknowcmd } }         ,
 	{ Mod1Mask|ControlMask|ShiftMask , XK_l                    , spawn          , {.v = locktogglecmd } }      ,
