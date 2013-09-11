@@ -251,6 +251,7 @@ static void pushup(const Arg *arg);
 static void pushdown(const Arg *arg);
 static void bstack(Monitor *m);
 static void bstackhoriz(Monitor *m);
+static void font_next(const Arg *arg);
 
 
 /* variables */
@@ -260,6 +261,7 @@ static char bstext[STATUS_BUF_LEN];
 static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
 static int bh, blw = 0;      /* bar geometry */
+static int curfont = -1;      /* Current font */
 static int (*xerrorxlib)(Display *, XErrorEvent *);
 static unsigned int numlockmask = 0;
 static void (*handler[LASTEvent]) (XEvent *) = {
@@ -1567,12 +1569,10 @@ setup(void) {
 	/* init screen */
 	screen = DefaultScreen(dpy);
 	root = RootWindow(dpy, screen);
-	fnt = drw_font_create(dpy, font);
 	sw = DisplayWidth(dpy, screen);
 	sh = DisplayHeight(dpy, screen);
-	bh = fnt->h + 2;
 	drw = drw_create(dpy, screen, root, sw, sh);
-	drw_setfont(drw, fnt);
+	font_next(NULL);
 	updategeom();
 	/* init atoms */
 	wmatom[WMProtocols] = XInternAtom(dpy, "WM_PROTOCOLS", False);
@@ -2610,5 +2610,41 @@ bstackhoriz(Monitor *m) {
 			if(th != m->wh)
 				ty += HEIGHT(c);
 		}
+	}
+}
+
+static void
+font_next(const Arg *arg) {
+	int first = 0;
+	Monitor *m;
+	if (curfont < 0 || arg == NULL) {
+		curfont = 0;
+		first = 1;
+	} else {
+		if (fnt != NULL) {
+			drw_font_free(dpy, fnt);
+		}
+		curfont += arg->i;
+		do {
+			curfont += (sizeof(fonts) / sizeof(fonts[0]));
+		} while (curfont < 0);
+		curfont %= (sizeof(fonts) / sizeof(fonts[0]));
+	}
+	strcpy(font, fonts[curfont]);
+	fnt = drw_font_create(dpy, font);
+	bh = fnt->h + 2;
+	drw_setfont(drw, fnt);
+	if (!first) {
+		for(m = mons; m; m = m->next) {
+			XUnmapWindow(dpy, m->barwin);
+			XDestroyWindow(dpy, m->barwin);
+			m->barwin = 0;
+			XUnmapWindow(dpy, m->bbarwin);
+			XDestroyWindow(dpy, m->bbarwin);
+			m->bbarwin = 0;
+			updatebarpos(m);
+		}
+		updatebars();
+		arrange(selmon);
 	}
 }
