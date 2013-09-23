@@ -27,8 +27,9 @@ static const Bool focusonwheelscroll = False;
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
-	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Pithos",   NULL,       NULL,       1 << 8,       False,       0 },
+	/* class                , instance , title , tags mask , isfloating , monitor */
+	{ "Pithos"              , NULL     , NULL  , 1 << 8    , False      , 0 }        ,
+    { "cvPopupWindow_popup" , NULL     , NULL  , 0         , False      , 0 }        , /* For hdl_designer */
 };
 
 /* layout(s) */
