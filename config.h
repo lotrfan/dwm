@@ -30,6 +30,7 @@ static const Rule rules[] = {
 	/* class                , instance , title , tags mask , isfloating , monitor */
 	{ "Pithos"              , NULL     , NULL  , 1 << 8    , False      , 0 }        ,
     { "cvPopupWindow_popup" , NULL     , NULL  , 0         , True       , 0 }        , /* For hdl_designer */
+    { "CvbApp"              , NULL     , NULL  , 0         , True       , 0 }        , /* For hdl_designer */
 };
 
 /* layout(s) */
