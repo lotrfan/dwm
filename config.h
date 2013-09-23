@@ -59,39 +59,40 @@ static const Layout layouts[] = {
 
 /* commands */
 /* dmenu-ish stuff */
-static char dmenumon[2]                  = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[]            = { "dmenu_run", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *calccmd[]             = { "dmenu_calc", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *passcmd[]             = { "/home/jeffrey/bin/pass_dmenu", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *srcmd[]               = { "/home/jeffrey/bin/sr_dmenu", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-/* Spawn clients                         = */
-static const char *termcmd[]             = { "urxvt", NULL };
-/* RANDR commands                        =
- * (adjust for additional monitors, etc) = */
-static const char *randrcmd[]            = { "/home/jeffrey/bin/dockedMonitor.sh", NULL };
-static const char *irandrcmd[]           = { "/home/jeffrey/bin/dockedMonitorRotate.sh", NULL };
-/* Volume commands                       = */
-static const char *volupcmd[]            = { "/home/jeffrey/bin/vol_up", NULL };
-static const char *voldowncmd[]          = { "/home/jeffrey/bin/vol_down", NULL };
-static const char *volmutecmd[]          = { "/home/jeffrey/bin/mute_toggle", NULL };
-/* Screen locking commands               = */
-static const char *locknowcmd[]          = { "/home/jeffrey/bin/locknow", NULL };
-static const char *locktogglecmd[]       = { "/home/jeffrey/bin/locktoggle", NULL };
-/* toggle touchpad (on/off)              = */
-static const char *touchtogglecmd[]      = { "/home/jeffrey/bin/touchtoggle", NULL };
-/* music commands                        = */
-static const char *music_playpausecmd[]  = { "/home/jeffrey/bin/music", "play_pause", NULL };
-static const char *music_nextcmd[]       = { "/home/jeffrey/bin/music", "next", NULL };
-static const char *music_prevcmd[]       = { "/home/jeffrey/bin/music", "prev", NULL };
-/* Increase/decrease screen resolution   = */
-static const char *nextmodecmd[]         = { "/home/jeffrey/bin/Xzoom_notify", "+", NULL };
-static const char *prevmodecmd[]         = { "/home/jeffrey/bin/Xzoom_notify", "-", NULL };
-static const char *defaultmodecmd[]      = { "/home/jeffrey/bin/Xzoom_notify", "0", NULL };
-/* Adjust screen atributes               = */
-static const char *brightnessdowncmd[]   = { "/home/jeffrey/bin/brighter", "-", NULL };
-static const char *brightnessupcmd[]     = { "/home/jeffrey/bin/brighter", "+", NULL };
-static const char *redshifttogglecmd[]   = { "/home/jeffrey/bin/redshift-toggle", NULL };
-static const char *autobrightnesscmd[]   = { "/home/jeffrey/bin/autobrightness", NULL };
+static char dmenumon[2]                          = "0"; /* component of dmenucmd, manipulated in spawn() */
+static const char *dmenucmd[]                    = { "dmenu_run", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *calccmd[]                     = { "dmenu_calc", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *passcmd[]                     = { "/home/jeffrey/bin/pass_dmenu", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *srcmd[]                       = { "/home/jeffrey/bin/sr_dmenu", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+/* Spawn clients                                 = */
+static const char *termcmd[]                     = { "urxvt", NULL };
+/* RANDR commands                                =
+ * (adjust for additional monitors, etc)         = */
+static const char *randrcmd[]                    = { "/home/jeffrey/bin/dockedMonitor.sh", NULL };
+static const char *irandrcmd[]                   = { "/home/jeffrey/bin/dockedMonitorRotate.sh", NULL };
+/* Volume commands                               = */
+static const char *volupcmd[]                    = { "/home/jeffrey/bin/vol_up", NULL };
+static const char *voldowncmd[]                  = { "/home/jeffrey/bin/vol_down", NULL };
+static const char *volmutecmd[]                  = { "/home/jeffrey/bin/mute_toggle", NULL };
+/* Screen locking commands                       = */
+static const char *locknowcmd[]                  = { "/home/jeffrey/bin/locknow", NULL };
+static const char *locktogglecmd[]               = { "/home/jeffrey/bin/locktoggle", NULL };
+/* toggle touchpad (on/off)                      = */
+static const char *touchtogglecmd[]              = { "/home/jeffrey/bin/touchtoggle", NULL };
+/* music commands                                = */
+static const char *music_playpausecmd[]          = { "/home/jeffrey/bin/music", "play_pause", NULL };
+static const char *music_nextcmd[]               = { "/home/jeffrey/bin/music", "next", NULL };
+static const char *music_prevcmd[]               = { "/home/jeffrey/bin/music", "prev", NULL };
+static const char *bluetooth_headset_togglecmd[] = { "/home/jeffrey/bin/bluethooth-headset-toggle", "prev", NULL }
+/* Increase/decrease screen resolution           = */
+static const char *nextmodecmd[]                 = { "/home/jeffrey/bin/Xzoom_notify", "+", NULL };
+static const char *prevmodecmd[]                 = { "/home/jeffrey/bin/Xzoom_notify", "-", NULL };
+static const char *defaultmodecmd[]              = { "/home/jeffrey/bin/Xzoom_notify", "0", NULL };
+/* Adjust screen atributes                       = */
+static const char *brightnessdowncmd[]           = { "/home/jeffrey/bin/brighter", "-", NULL };
+static const char *brightnessupcmd[]             = { "/home/jeffrey/bin/brighter", "+", NULL };
+static const char *redshifttogglecmd[]           = { "/home/jeffrey/bin/redshift-toggle", NULL };
+static const char *autobrightnesscmd[]           = { "/home/jeffrey/bin/autobrightness", NULL };
 
 void self_restart(const Arg *arg) {
     char * const argv[] = {"/usr/bin/dwm", NULL};
@@ -118,6 +119,8 @@ static Key keys[] = {
 	{ 0                              , XF86XK_AudioPause       , spawn          , {.v = music_playpausecmd } } ,
 	{ 0                              , XF86XK_AudioPrev        , spawn          , {.v = music_prevcmd } }      ,
 	{ 0                              , XF86XK_AudioNext        , spawn          , {.v = music_nextcmd } }      ,
+
+	{ MODKEY                         , XF86XK_AudioPlay        , spawn          , {.v = bluetooth_headset_togglecmd } } ,
 
 	{ 0                              , XF86XK_TouchpadToggle   , spawn          , {.v = touchtogglecmd } }     ,
 
