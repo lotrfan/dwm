@@ -2452,9 +2452,6 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 	int reset;
 	int tmpw;
 
-	/* Simulate the padding found in drw_text */
-	x += (h / 2);
-
 	c = text;
 	start = text;
 	while (c != NULL && *c != '\0') {
