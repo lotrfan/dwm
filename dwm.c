@@ -2283,6 +2283,20 @@ ansicolor_getwidth(const char *buf) {
 				if (*(c + 1) == '[') {
 					inescape = 1;
 				}
+				if (*(c + 1) == '{') {
+					inescape = 1;
+					width += bar_padding;
+					if (*(c + 2) == '0') {
+						// horizontal
+						for (int i = 0; i < bar_horizontal_width; i ++) {
+							tmp[pos] = 'M';
+							pos ++;
+						}
+					} else {
+						// vertical
+						width += bar_vertical_width;
+					}
+				}
 				// ??
 			} else if (inescape && (*c == 'm')) {
 				inescape = 0;
@@ -2292,7 +2306,7 @@ ansicolor_getwidth(const char *buf) {
 			}
 		}
 		tmp[pos] = '\0';
-		width = TEXTW(tmp);
+		width += TEXTW(tmp);
 		free(tmp);
 		return width;
 	}
@@ -2446,7 +2460,7 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 	while (c != NULL && *c != '\0') {
 		if (*c == '\033') {
 			/* Possibly the start of an escape sequence */
-			if (*(c + 1) == '[') { /* This can't go past the end of the string (although (c+1) might be the end of the string) */
+			if (*(c + 1) == '[' || *(c + 1) == '{') { /* This can't go past the end of the string (although (c+1) might be the end of the string) */
 				char *mpos = strstr(c, "m");
 				if (mpos == NULL) {
 					// Can't find the end
@@ -2464,10 +2478,77 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 					start = mpos + 1;
 					strncpy(tmp, (c + 2), mpos - (c + 2));
 					tmp[mpos - (c + 2)] = '\0';
-					ansicolor_ParseAnsiEsc(tmp, &reset, &(drw->scheme->fg->rgb), &(drw->scheme->bg->rgb));
-					if (reset) {
-						drw->scheme->fg->rgb = orig_fg;
-						drw->scheme->bg->rgb = orig_bg;
+					if (*(c + 1) == '[') {
+						// color change
+						ansicolor_ParseAnsiEsc(tmp, &reset, &(drw->scheme->fg->rgb), &(drw->scheme->bg->rgb));
+						if (reset) {
+							drw->scheme->fg->rgb = orig_fg;
+							drw->scheme->bg->rgb = orig_bg;
+						}
+					} else {
+						// bar graph
+						if (strlen(tmp) >= 3) {
+							int vertical;
+							float percent;
+							vertical = (tmp[0] != '0');
+							sscanf(tmp + 2, "%f", &percent);
+
+							unsigned long old_fg = drw->scheme->fg->rgb;
+							unsigned long old_bg = drw->scheme->bg->rgb;
+
+							x += bar_padding/2;
+							if (vertical) {
+								tmpw = bar_vertical_width;
+								int height = bar_vertical_height*bh;
+								int filled_height = percent*(height - 2);
+
+								// Draw the background
+								drw_text(drw, x, 0, tmpw, bh, NULL, 0);
+
+								drw->scheme->fg->rgb = old_bg;
+								drw->scheme->bg->rgb = old_fg;
+
+								// Draw the border (in the forground color)
+								drw_text(drw, x, (bh - height)/2, tmpw, height, NULL, 0);
+
+								drw->scheme->fg->rgb = old_fg;
+								drw->scheme->bg->rgb = old_bg;
+
+								// Draw the unfilled part of the bar (in the background color)
+								drw_text(drw, x + 1, (bh - (height - 2))/2, tmpw - 2, (height - 2) - filled_height, NULL, 0);
+
+								x += tmpw + 0;
+								w -= tmpw;
+							} else {
+								for (int i = 0; i < bar_horizontal_width; i ++) {
+									tmp[i] = 'M';
+								}
+								tmp[bar_horizontal_width] = '\0';
+
+								tmpw = drw_font_getexts_width(drw->font, tmp, strlen(tmp));
+								int filled_width = percent*(float)(tmpw - 2);
+
+								// Draw the background
+								drw_text(drw, x, 0, tmpw, bh, NULL, 0);
+
+								drw->scheme->fg->rgb = old_bg;
+								drw->scheme->bg->rgb = old_fg;
+
+								// Draw the border (in the forground color)
+								drw_text(drw, x, (bh - bar_horizontal_height)/2, tmpw, bar_horizontal_height, NULL, 0);
+
+								drw->scheme->fg->rgb = old_fg;
+								drw->scheme->bg->rgb = old_bg;
+
+								// Draw the unfilled part of the bar (in the background color)
+								drw_text(drw, x + 1 + filled_width, (bh - (bar_horizontal_height - 2))/2, (tmpw - 2) - filled_width, bar_horizontal_height - 2, NULL, 0);
+
+								x += tmpw + 0;
+								w -= tmpw;
+							}
+							x += bar_padding/2;
+							w -= bar_padding;
+						}
 					}
 					c = mpos;
 				}

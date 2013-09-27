@@ -19,6 +19,11 @@ static const Bool showbbar                = True;     /* False means no bottom b
 /* False means using the scroll wheel on a window will not change focus */
 static const Bool focusonwheelscroll = False;
 
+static const unsigned int   bar_horizontal_width  = 3;   /* number of characters */
+static const unsigned int   bar_horizontal_height = 4;   /* in pixels */
+static const unsigned int   bar_vertical_width    = 4;   /* in pixels */
+static const          float bar_vertical_height   = 0.8; /* as a percentage of bar height */
+static const unsigned int   bar_padding           = 4;   /* in pixels, should be even (left to right padding) */
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
