@@ -2490,6 +2490,13 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 							vertical = (tmp[0] != '0');
 							sscanf(tmp + 2, "%f", &percent);
 
+							if (percent > 1) {
+								percent = 1;
+							}
+							if (percent < 0) {
+								percent = 0;
+							}
+
 							unsigned long old_fg = drw->scheme->fg->rgb;
 							unsigned long old_bg = drw->scheme->bg->rgb;
 
