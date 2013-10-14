@@ -570,8 +570,6 @@ clientmessage(XEvent *e) {
             Arg tmp = {0};
             tmp.ui = c->mon->seltags;
             view(&tmp);
-			/*c->mon->seltags ^= 1;*/
-			/*c->mon->tagset[c->mon->seltags] = c->tags;*/
 		}
 		pop(c);
 	}
