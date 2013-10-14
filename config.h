@@ -72,6 +72,7 @@ static const char *dmenucmd[]                    = { "dmenu_run", "-m", dmenumon
 static const char *calccmd[]                     = { "dmenu_calc", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *passcmd[]                     = { "/home/jeffrey/bin/pass_dmenu", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *srcmd[]                       = { "/home/jeffrey/bin/sr_dmenu", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *raisecmd[]                    = { "dmenu_raise", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 /* Spawn clients                                 = */
 static const char *termcmd[]                     = { "urxvt", NULL };
 /* RANDR commands                                =
@@ -115,6 +116,7 @@ static Key keys[] = {
 	{ MODKEY                         , XK_a                    , spawn          , {.v = passcmd } }            ,
 	{ MODKEY                         , XK_c                    , spawn          , {.v = calccmd } }            ,
 	{ MODKEY                         , XK_s                    , spawn          , {.v = srcmd } }              ,
+	{ MODKEY                         , XK_w                    , spawn          , {.v = raisecmd } }              ,
 
 	{ MODKEY|ShiftMask               , XK_Return               , spawn          , {.v = termcmd } }            ,
 
