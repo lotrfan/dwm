@@ -567,8 +567,11 @@ clientmessage(XEvent *e) {
 	}
 	else if(cme->message_type == netatom[NetActiveWindow]) {
 		if(!ISVISIBLE(c)) {
-			c->mon->seltags ^= 1;
-			c->mon->tagset[c->mon->seltags] = c->tags;
+            Arg tmp = {0};
+            tmp.ui = c->mon->seltags;
+            view(&tmp);
+			/*c->mon->seltags ^= 1;*/
+			/*c->mon->tagset[c->mon->seltags] = c->tags;*/
 		}
 		pop(c);
 	}
