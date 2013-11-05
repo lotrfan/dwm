@@ -73,6 +73,7 @@ static const char *calccmd[]                     = { "dmenu_calc", "-m", dmenumo
 static const char *passcmd[]                     = { "/home/jeffrey/bin/pass_dmenu", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *srcmd[]                       = { "/home/jeffrey/bin/sr_dmenu", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *raisecmd[]                    = { "dmenu_raise", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *firefoxcmd[]                  = { "/home/jeffrey/bin/dmenu_firefox", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *menucmd[]                     = { "dmenu_menu", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 /* Spawn clients                                 = */
 static const char *termcmd[]                     = { "urxvt", NULL };
@@ -118,7 +119,8 @@ static Key keys[] = {
 	{ MODKEY                         , XK_c                    , spawn          , {.v = calccmd } }            ,
 	{ MODKEY                         , XK_s                    , spawn          , {.v = srcmd } }              ,
 	{ MODKEY                         , XK_w                    , spawn          , {.v = raisecmd } }           ,
-	{ MODKEY                         , XK_x                    , spawn          , {.v = menucmd } }            ,
+	{ MODKEY                         , XK_x                    , spawn          , {.v = firefoxcmd } }            ,
+	{ MODKEY                         , XK_o                    , spawn          , {.v = menucmd } }            ,
 
 	{ MODKEY|ShiftMask               , XK_Return               , spawn          , {.v = termcmd } }            ,
 
@@ -142,7 +144,7 @@ static Key keys[] = {
 	{ Mod4Mask                       , XK_Up                   , spawn          , {.v = brightnessupcmd } }    ,
 
 	{ MODKEY                         , XK_p                    , spawn          , {.v = randrcmd } }           ,
-	{ MODKEY                         , XK_o                    , spawn          , {.v = irandrcmd } }          ,
+//	{ MODKEY                         , XK_o                    , spawn          , {.v = irandrcmd } }          ,
 	{ Mod4Mask                       , XK_KP_Add               , spawn          , {.v = nextmodecmd } }        ,
 	{ Mod4Mask                       , XK_KP_Subtract          , spawn          , {.v = prevmodecmd } }        ,
 	{ Mod4Mask                       , XK_KP_Multiply          , spawn          , {.v = defaultmodecmd } }     ,
