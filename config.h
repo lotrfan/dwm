@@ -33,11 +33,10 @@ static const unsigned int   bar_padding           = 4;   /* in pixels, should be
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
-	/* class                , instance , title               , tags mask , isfloating , monitor */
-	{ "Pithos"              , NULL     , NULL                , 1 << 8    , False      , 0 }        ,
-	{ "cvPopupWindow_popup" , NULL     , NULL                , 0         , True       , 0 }        , /* For hdl_designer */
-	{ "CvbApp"              , NULL     , NULL                , 0         , True       , 0 }        , /* For hdl_designer */
-	{ "hdldesigner"         , NULL     , "Object Properties" , 0         , True       , 0 }        , /* For hdl_designer */
+	/* class          , instance              , title               , tags mask , isfloating , monitor */
+	{ "Pithos"        , NULL                  , NULL                , 1 << 8    , False      , 0 }        ,
+	{ "CvbApp"        , "cvPopupWindow_popup" , NULL                , 0         , True       , 0 }        , /* For hdl_designer */
+	{ "TopLevelShell" , "hdldesigner"         , "Object Properties" , 0         , True       , 0 }        , /* For hdl_designer */
 };
 
 /* layout(s) */
