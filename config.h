@@ -3,7 +3,7 @@
 /* appearance */
 /* Custom font at beginning for dwmstatus output */
 static const char fonts[][150]            = {
-    "-*-stlarch-medium-r-*-*-10-*-*-*-*-*-*-*" "," "-*-profont-*-*-*-*-12-*-*-*-*-*-*-*",
+    "-*-stlarch-medium-r-*-*-10-*-*-*-*-*-*-*" "," "-*-profont-medium-*-*-*-12-*-*-*-*-*-*-*",
     "-*-stlarch-medium-r-*-*-10-*-*-*-*-*-*-*" "," "-*-terminus-medium-r-*-*-12-*-*-*-*-*-*-*",
     "-*-stlarch-medium-r-*-*-10-*-*-*-*-*-*-*" "," "-*-terminus-medium-r-*-*-13-*-*-*-*-*-*-*",
 };
