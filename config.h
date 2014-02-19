@@ -8,12 +8,12 @@ static const char fonts[][150]            = {
     "-*-stlarch-medium-r-*-*-10-*-*-*-*-*-*-*" "," "-*-terminus-medium-r-*-*-13-*-*-*-*-*-*-*",
 };
 static       char font[sizeof(fonts[0])]  = "";
-static const char normbordercolor[]       = "#444444";
-static const char normbgcolor[]           = "#222222";
-static const char normfgcolor[]           = "#bbbbbb";
-static const char selbordercolor[]        = "#005577";
-static const char selbgcolor[]            = "#005577";
-static const char selfgcolor[]            = "#eeeeee";
+static const char normbordercolor[]       = "#073642";
+static const char normbgcolor[]           = "#011318";
+static const char normfgcolor[]           = "#7E796C";
+static const char selbordercolor[]        = "#586e75";
+static const char selbgcolor[]            = "#002b36";
+static const char selfgcolor[]            = "#fdf6e3";
 
 static const unsigned int borderpx        = 1;        /* border pixel of windows */
 static const unsigned int snap            = 32;       /* snap pixel */
