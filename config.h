@@ -105,6 +105,9 @@ static const char *brightnessupcmd[]             = { "/home/jeffrey/bin/osdize",
 static const char *redshifttogglecmd[]           = { "/home/jeffrey/bin/redshift-toggle", NULL };
 static const char *autobrightnesscmd[]           = { "/home/jeffrey/bin/autobrightness", NULL };
 
+static const char scratchpadname[]               = "scratchpad";
+static const char *scratchpadexec[]              = { "urxvt", "-name", scratchpadname, "-geometry", "80x20", NULL };
+
 void self_restart(const Arg *arg) {
     char * const argv[] = {"/usr/bin/dwm", NULL};
     execv(argv[0], argv);
@@ -123,6 +126,7 @@ static Key keys[] = {
 	{ MODKEY                         , XK_o                    , spawn          , {.v = menucmd } }            ,
 
 	{ MODKEY|ShiftMask               , XK_Return               , spawn          , {.v = termcmd } }            ,
+	{ MODKEY                         , XK_grave                , togglescratch  , {.v = scratchpadexec } }            ,
 
 	/* Find keys with xev */
 	{ 0                              , XF86XK_AudioRaiseVolume , spawn          , {.v = volupcmd } }           ,
