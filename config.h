@@ -34,9 +34,10 @@ static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
 	/* class          , instance              , title               , tags mask , isfloating , monitor */
-	{ "Pithos"        , NULL                  , NULL                , 1 << 8    , False      , 0 }        ,
-	{ "CvbApp"        , "cvPopupWindow_popup" , NULL                , 0         , True       , 0 }        , /* For hdl_designer */
-	{ "TopLevelShell" , "hdldesigner"         , "Object Properties" , 0         , True       , 0 }        , /* For hdl_designer */
+	{ "Pithos"        , NULL                  , NULL                , 1 << 8    , False      , 0 } ,
+	{ "CvbApp"        , "cvPopupWindow_popup" , NULL                , 0         , True       , 0 } , /* For hdl_designer */
+	{ "TopLevelShell" , "hdldesigner"         , "Object Properties" , 0         , True       , 0 } , /* For hdl_designer */
+	{ "Firefox"       , "Popup"               , NULL                , 0         , True       , 0 } ,
 };
 
 /* layout(s) */
