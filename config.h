@@ -75,6 +75,7 @@ static const char *passcmd[]                     = { "/home/jeffrey/bin/dmenu_pa
 static const char *srcmd[]                       = { "/home/jeffrey/bin/dmenu_sr", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *raisecmd[]                    = { "dmenu_raise", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *firefoxcmd[]                  = { "/home/jeffrey/bin/dmenu_firefox", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *abducosessioncmd[]            = { "/home/jeffrey/bin/dmenu_abduco", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *menucmd[]                     = { "dmenu_menu", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 /* Spawn clients                                 = */
 static const char *termcmd[]                     = { "st-dvtm", NULL };
@@ -121,6 +122,7 @@ static Key keys[] = {
 	{ MODKEY                         , XK_s                    , spawn          , {.v = srcmd } }              ,
 	{ MODKEY                         , XK_w                    , spawn          , {.v = raisecmd } }           ,
 	{ MODKEY                         , XK_x                    , spawn          , {.v = firefoxcmd } }            ,
+	{ MODKEY                         , XK_z                    , spawn          , {.v = abducosessioncmd } }   ,
 	{ MODKEY                         , XK_o                    , spawn          , {.v = menucmd } }            ,
 
 	{ MODKEY|ShiftMask               , XK_Return               , spawn          , {.v = termcmd } }            ,
