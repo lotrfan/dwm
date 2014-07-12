@@ -121,7 +121,7 @@ static Key keys[] = {
 	{ MODKEY                         , XK_c                    , spawn          , {.v = calccmd } }            ,
 	{ MODKEY                         , XK_s                    , spawn          , {.v = srcmd } }              ,
 	{ MODKEY                         , XK_w                    , spawn          , {.v = raisecmd } }           ,
-	{ MODKEY                         , XK_x                    , spawn          , {.v = firefoxcmd } }            ,
+	{ MODKEY                         , XK_x                    , spawn          , {.v = firefoxcmd } }         ,
 	{ MODKEY                         , XK_z                    , spawn          , {.v = abducosessioncmd } }   ,
 	{ MODKEY                         , XK_o                    , spawn          , {.v = menucmd } }            ,
 
