@@ -93,9 +93,6 @@ static const char *locktogglecmd[]               = { "/home/jeffrey/bin/locktogg
 /* toggle touchpad (on/off)                      = */
 static const char *touchtogglecmd[]              = { "/home/jeffrey/bin/touchtoggle", NULL };
 /* music commands                                = */
-static const char *music_playpausecmd[]          = { "/home/jeffrey/bin/music", "play_pause", NULL };
-static const char *music_nextcmd[]               = { "/home/jeffrey/bin/music", "next", NULL };
-static const char *music_prevcmd[]               = { "/home/jeffrey/bin/music", "prev", NULL };
 static const char *bluetooth_headset_togglecmd[] = { "/home/jeffrey/bin/bluetooth-headset-toggle", "prev", NULL };
 /* Increase/decrease screen resolution           = */
 static const char *nextmodecmd[]                 = { "/home/jeffrey/bin/Xzoom_notify", "+", NULL };
@@ -131,11 +128,6 @@ static Key keys[] = {
 	{ 0                              , XF86XK_AudioRaiseVolume , spawn          , {.v = volupcmd } }           ,
 	{ 0                              , XF86XK_AudioLowerVolume , spawn          , {.v = voldowncmd } }         ,
 	{ 0                              , XF86XK_AudioMute        , spawn          , {.v = volmutecmd } }         ,
-
-	{ 0                              , XF86XK_AudioPlay        , spawn          , {.v = music_playpausecmd } } ,
-	{ 0                              , XF86XK_AudioPause       , spawn          , {.v = music_playpausecmd } } ,
-	{ 0                              , XF86XK_AudioPrev        , spawn          , {.v = music_prevcmd } }      ,
-	{ 0                              , XF86XK_AudioNext        , spawn          , {.v = music_nextcmd } }      ,
 
 	{ MODKEY                         , XF86XK_AudioPlay        , spawn          , {.v = bluetooth_headset_togglecmd } } ,
 
