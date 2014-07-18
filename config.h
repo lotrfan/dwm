@@ -79,12 +79,6 @@ static const char *abducosessioncmd[]            = { "/home/jeffrey/bin/dmenu_ab
 static const char *menucmd[]                     = { "dmenu_menu", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 /* Spawn clients                                 = */
 static const char *termcmd[]                     = { "st-dvtm", NULL };
-/* RANDR commands                                =
- * (adjust for additional monitors, etc)         = */
-static const char *randrcmd[]                    = { "/home/jeffrey/bin/dockedMonitor.sh", NULL };
-static const char *irandrcmd[]                   = { "/home/jeffrey/bin/dockedMonitorRotate.sh", NULL };
-/* toggle touchpad (on/off)                      = */
-static const char *touchtogglecmd[]              = { "/home/jeffrey/bin/touchtoggle", NULL };
 /* Increase/decrease screen resolution           = */
 static const char *nextmodecmd[]                 = { "/home/jeffrey/bin/Xzoom_notify", "+", NULL };
 static const char *prevmodecmd[]                 = { "/home/jeffrey/bin/Xzoom_notify", "-", NULL };
@@ -111,16 +105,10 @@ static Key keys[] = {
 	{ MODKEY                         , XK_z                    , spawn          , {.v = abducosessioncmd } }   ,
 	{ MODKEY                         , XK_o                    , spawn          , {.v = menucmd } }            ,
 
-	{ MODKEY|ShiftMask               , XK_Return               , spawn          , {.v = termcmd } }            ,
-
 	/* Find keys with xev */
-	{ 0                              , XF86XK_TouchpadToggle   , spawn          , {.v = touchtogglecmd } }     ,
-
 	{ 0                              , XF86XK_Calculator       , spawn          , {.v = autobrightnesscmd } }  , // calculator key
 	{ ControlMask                    , XF86XK_Calculator       , spawn          , {.v = redshifttogglecmd } }  , // ctrl+calculator key
 
-	{ MODKEY                         , XK_p                    , spawn          , {.v = randrcmd } }           ,
-//	{ MODKEY                         , XK_o                    , spawn          , {.v = irandrcmd } }          ,
 	{ Mod4Mask                       , XK_KP_Add               , spawn          , {.v = nextmodecmd } }        ,
 	{ Mod4Mask                       , XK_KP_Subtract          , spawn          , {.v = prevmodecmd } }        ,
 	{ Mod4Mask                       , XK_KP_Multiply          , spawn          , {.v = defaultmodecmd } }     ,
