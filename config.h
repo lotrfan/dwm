@@ -79,13 +79,6 @@ static const char *abducosessioncmd[]            = { "/home/jeffrey/bin/dmenu_ab
 static const char *menucmd[]                     = { "dmenu_menu", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 /* Spawn clients                                 = */
 static const char *termcmd[]                     = { "st-dvtm", NULL };
-/* Increase/decrease screen resolution           = */
-static const char *nextmodecmd[]                 = { "/home/jeffrey/bin/Xzoom_notify", "+", NULL };
-static const char *prevmodecmd[]                 = { "/home/jeffrey/bin/Xzoom_notify", "-", NULL };
-static const char *defaultmodecmd[]              = { "/home/jeffrey/bin/Xzoom_notify", "0", NULL };
-/* Adjust screen atributes                       = */
-static const char *redshifttogglecmd[]           = { "/home/jeffrey/bin/redshift-toggle", NULL };
-static const char *autobrightnesscmd[]           = { "/home/jeffrey/bin/autobrightness", NULL };
 
 void self_restart(const Arg *arg) {
     char * const argv[] = {"/usr/bin/dwm", NULL};
@@ -106,12 +99,6 @@ static Key keys[] = {
 	{ MODKEY                         , XK_o                    , spawn          , {.v = menucmd } }            ,
 
 	/* Find keys with xev */
-	{ 0                              , XF86XK_Calculator       , spawn          , {.v = autobrightnesscmd } }  , // calculator key
-	{ ControlMask                    , XF86XK_Calculator       , spawn          , {.v = redshifttogglecmd } }  , // ctrl+calculator key
-
-	{ Mod4Mask                       , XK_KP_Add               , spawn          , {.v = nextmodecmd } }        ,
-	{ Mod4Mask                       , XK_KP_Subtract          , spawn          , {.v = prevmodecmd } }        ,
-	{ Mod4Mask                       , XK_KP_Multiply          , spawn          , {.v = defaultmodecmd } }     ,
 	{ Mod4Mask|ControlMask           , XK_KP_Add               , font_next      , {.i = +1 } }                 ,
 	{ Mod4Mask|ControlMask           , XK_KP_Subtract          , font_next      , {.i = -1 } }                 ,
 
