@@ -83,9 +83,6 @@ static const char *termcmd[]                     = { "st-dvtm", NULL };
  * (adjust for additional monitors, etc)         = */
 static const char *randrcmd[]                    = { "/home/jeffrey/bin/dockedMonitor.sh", NULL };
 static const char *irandrcmd[]                   = { "/home/jeffrey/bin/dockedMonitorRotate.sh", NULL };
-/* Screen locking commands                       = */
-static const char *locknowcmd[]                  = { "/home/jeffrey/bin/locknow", NULL };
-static const char *locktogglecmd[]               = { "/home/jeffrey/bin/locktoggle", NULL };
 /* toggle touchpad (on/off)                      = */
 static const char *touchtogglecmd[]              = { "/home/jeffrey/bin/touchtoggle", NULL };
 /* Increase/decrease screen resolution           = */
@@ -134,9 +131,6 @@ static Key keys[] = {
 	{ Mod4Mask|ControlMask           , XK_KP_Add               , font_next      , {.i = +1 } }                 ,
 	{ Mod4Mask|ControlMask           , XK_KP_Subtract          , font_next      , {.i = -1 } }                 ,
 
-
-	{ Mod1Mask|ControlMask           , XK_l                    , spawn          , {.v = locknowcmd } }         ,
-	{ Mod1Mask|ControlMask|ShiftMask , XK_l                    , spawn          , {.v = locktogglecmd } }      ,
 
 	{ MODKEY                         , XK_b                    , togglebar      , {.i = 0} }                   ,
 	{ MODKEY                         , XK_v                    , togglebar      , {.i = 1} }                   ,
