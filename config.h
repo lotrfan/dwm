@@ -83,10 +83,6 @@ static const char *termcmd[]                     = { "st-dvtm", NULL };
  * (adjust for additional monitors, etc)         = */
 static const char *randrcmd[]                    = { "/home/jeffrey/bin/dockedMonitor.sh", NULL };
 static const char *irandrcmd[]                   = { "/home/jeffrey/bin/dockedMonitorRotate.sh", NULL };
-/* Volume commands                               = */
-static const char *volupcmd[]                    = { "/home/jeffrey/bin/osdize", "/home/jeffrey/bin/pavol", "+", NULL };
-static const char *voldowncmd[]                  = { "/home/jeffrey/bin/osdize", "/home/jeffrey/bin/pavol", "-", NULL };
-static const char *volmutecmd[]                  = { "/home/jeffrey/bin/osdize", "/home/jeffrey/bin/pavol", "t", NULL };
 /* Screen locking commands                       = */
 static const char *locknowcmd[]                  = { "/home/jeffrey/bin/locknow", NULL };
 static const char *locktogglecmd[]               = { "/home/jeffrey/bin/locktoggle", NULL };
@@ -123,10 +119,6 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask               , XK_Return               , spawn          , {.v = termcmd } }            ,
 
 	/* Find keys with xev */
-	{ 0                              , XF86XK_AudioRaiseVolume , spawn          , {.v = volupcmd } }           ,
-	{ 0                              , XF86XK_AudioLowerVolume , spawn          , {.v = voldowncmd } }         ,
-	{ 0                              , XF86XK_AudioMute        , spawn          , {.v = volmutecmd } }         ,
-
 	{ 0                              , XF86XK_TouchpadToggle   , spawn          , {.v = touchtogglecmd } }     ,
 
 	{ 0                              , XF86XK_Calculator       , spawn          , {.v = autobrightnesscmd } }  , // calculator key
