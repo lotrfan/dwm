@@ -90,8 +90,6 @@ static const char *nextmodecmd[]                 = { "/home/jeffrey/bin/Xzoom_no
 static const char *prevmodecmd[]                 = { "/home/jeffrey/bin/Xzoom_notify", "-", NULL };
 static const char *defaultmodecmd[]              = { "/home/jeffrey/bin/Xzoom_notify", "0", NULL };
 /* Adjust screen atributes                       = */
-static const char *brightnessdowncmd[]           = { "/home/jeffrey/bin/osdize", "/home/jeffrey/bin/brighter", "-", NULL };
-static const char *brightnessupcmd[]             = { "/home/jeffrey/bin/osdize", "/home/jeffrey/bin/brighter", "+", NULL };
 static const char *redshifttogglecmd[]           = { "/home/jeffrey/bin/redshift-toggle", NULL };
 static const char *autobrightnesscmd[]           = { "/home/jeffrey/bin/autobrightness", NULL };
 
@@ -120,8 +118,6 @@ static Key keys[] = {
 
 	{ 0                              , XF86XK_Calculator       , spawn          , {.v = autobrightnesscmd } }  , // calculator key
 	{ ControlMask                    , XF86XK_Calculator       , spawn          , {.v = redshifttogglecmd } }  , // ctrl+calculator key
-	{ Mod4Mask                       , XK_Down                 , spawn          , {.v = brightnessdowncmd } }  ,
-	{ Mod4Mask                       , XK_Up                   , spawn          , {.v = brightnessupcmd } }    ,
 
 	{ MODKEY                         , XK_p                    , spawn          , {.v = randrcmd } }           ,
 //	{ MODKEY                         , XK_o                    , spawn          , {.v = irandrcmd } }          ,
