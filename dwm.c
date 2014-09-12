@@ -192,7 +192,6 @@ static void manage(Window w, XWindowAttributes *wa);
 static void mappingnotify(XEvent *e);
 static void maprequest(XEvent *e);
 static void monocle(Monitor *m);
-static void motionnotify(XEvent *e);
 static void movemouse(const Arg *arg);
 static Client *nexttiled(Client *c);
 static void pop(Client *);
@@ -277,7 +276,6 @@ static void (*handler[LASTEvent]) (XEvent *) = {
 	[KeyPress] = keypress,
 	[MappingNotify] = mappingnotify,
 	[MapRequest] = maprequest,
-	[MotionNotify] = motionnotify,
 	[PropertyNotify] = propertynotify,
 	[UnmapNotify] = unmapnotify
 };
@@ -1182,22 +1180,6 @@ monocle(Monitor *m) {
 		if(r)
 			resizeclient(c, m->wx, m->wy, m->ww - (2 * c->bw), m->wh - (2 * c->bw));
 	}
-}
-
-void
-motionnotify(XEvent *e) {
-	static Monitor *mon = NULL;
-	Monitor *m;
-	XMotionEvent *ev = &e->xmotion;
-
-	if(ev->window != root)
-		return;
-	if((m = recttomon(ev->x_root, ev->y_root, 1, 1)) != mon && mon) {
-		unfocus(selmon->sel, True);
-		selmon = m;
-		focus(NULL);
-	}
-	mon = m;
 }
 
 void
