@@ -74,7 +74,7 @@ static const char *dmenucmd[]                    = { "dmenu_run", "-m", dmenumon
 static const char *termcmd[]                     = { "st-dvtm", NULL };
 
 void self_restart(const Arg *arg) {
-    char * const argv[] = {"/usr/bin/dwm", NULL};
+    char * const argv[] = {"/home/tolar2/install/bin/dwm", NULL};
     execv(argv[0], argv);
 }
 
