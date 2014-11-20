@@ -70,13 +70,6 @@ static const Layout layouts[] = {
 /* dmenu-ish stuff */
 static char dmenumon[2]                          = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[]                    = { "dmenu_run", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *calccmd[]                     = { "dmenu_calc", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *passcmd[]                     = { "/home/jeffrey/bin/dmenu_pass", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *srcmd[]                       = { "/home/jeffrey/bin/dmenu_sr", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *raisecmd[]                    = { "dmenu_raise", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *firefoxcmd[]                  = { "/home/jeffrey/bin/dmenu_firefox", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *abducosessioncmd[]            = { "/home/jeffrey/bin/dmenu_abduco", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *menucmd[]                     = { "dmenu_menu", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 /* Spawn clients                                 = */
 static const char *termcmd[]                     = { "st-dvtm", NULL };
 
@@ -90,13 +83,6 @@ void self_restart(const Arg *arg) {
 static Key keys[] = {
 	/* modifier                      , key                     , function       , argument */
 	{ MODKEY                         , XK_space                , spawn          , {.v = dmenucmd } }           ,
-	{ MODKEY                         , XK_a                    , spawn          , {.v = passcmd } }            ,
-	{ MODKEY                         , XK_c                    , spawn          , {.v = calccmd } }            ,
-	{ MODKEY                         , XK_s                    , spawn          , {.v = srcmd } }              ,
-	{ MODKEY                         , XK_w                    , spawn          , {.v = raisecmd } }           ,
-	{ MODKEY                         , XK_x                    , spawn          , {.v = firefoxcmd } }         ,
-	{ MODKEY                         , XK_z                    , spawn          , {.v = abducosessioncmd } }   ,
-	{ MODKEY                         , XK_o                    , spawn          , {.v = menucmd } }            ,
 
 	/* Find keys with xev */
 	{ Mod4Mask|ControlMask           , XK_KP_Add               , font_next      , {.i = +1 } }                 ,
