@@ -2381,7 +2381,9 @@ ansicolor_ParseAnsiEsc(char *seq, int *reset, unsigned long *fg, unsigned long *
     }
     for (i = 0; i < argc; i ++) {
         arg = args[i];
-        if (arg >= 30 && arg <= 37) {
+        if (arg == 0) {
+            *reset = 1;
+        } else if (arg >= 30 && arg <= 37) {
             *fg = standardcolors[1][arg-30];
         } else if (arg >= 40 && arg <= 47) {
             *bg = standardcolors[0][arg-40];
