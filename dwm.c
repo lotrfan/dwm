@@ -245,8 +245,6 @@ static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
 static unsigned int ansicolor_getwidth(const char *buf);
 static void ansicolor_ParseAnsiEsc(char *seq, int *reset, unsigned long *fg, unsigned long *bg);
-static void ansicolor_GetAnsiColor(int escapecode, unsigned long *col);
-static int ansicolor_countchars(char c, char *buf);
 static void drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text);
 static void pushup(const Arg *arg);
 static void pushdown(const Arg *arg);
@@ -2291,17 +2289,6 @@ main(int argc, char *argv[]) {
 	return EXIT_SUCCESS;
 }
 
-int /* count occurrences of c in buf */
-ansicolor_countchars(char c, char * buf) {
-	char *ptr = buf;
-	int ctr = 0;
-	while (*ptr) {
-		if (*ptr == c) ctr++;
-		ptr++;
-	}
-	return ctr;
-}
-
 unsigned int
 ansicolor_getwidth(const char *buf) {
 	if (buf == NULL) {
@@ -2359,129 +2346,93 @@ ansicolor_getwidth(const char *buf) {
 
 void
 ansicolor_ParseAnsiEsc(char *seq, int *reset, unsigned long *fg, unsigned long *bg) {
-	char *cp, *token;
 	static unsigned long standardcolors[2][8] = {
 		{0x000000,0x800000,0x008000,0x808000,0x000080,0x800080,0x008080,0xc0c0c0},
 		{0x808080,0xff0000,0x00ff00,0xffff00,0x0000ff,0xff00ff,0x00ffff,0xffffff}
 	};
 
-	cp = (char*)malloc(strlen(seq) + 1);
-	if (cp == NULL) {
-		perror("ansicolor_ParseAnsiEsc");
-		exit(1);
-	}
-	strcpy(cp, seq);
+    int args[10];
+    int argc = 0;
+    args[argc] = 0;
 
-	int semis = ansicolor_countchars(';', seq);
-	char *delim = ";";
-	char *toklist[semis + 1];
-	int tok_ctr = 0;
-	int arglist[semis + 1];
-	int r, c, i, j;
+    *reset = 0;
 
-	*reset = 0;
+    char *cur = seq;
+    while (*cur && *cur != 'm') {
+        if (*cur >= '0' && *cur <= '9') {
+            args[argc] = (args[argc]*10) + (*cur - '0');
+        } else if (*cur == ';') {
+            argc ++;
+            args[argc] = 0;
+        } else {
+            return; // not a valid number
+        }
+        if (argc >= 10) {
+            return;
+        }
+        cur ++;
+    }
 
-	token = strtok(cp, delim);
-	while (token) {
-		toklist[tok_ctr] = token;
-		tok_ctr ++;
-		token = strtok(NULL, delim);
-	}
-	if ((tok_ctr > 3) || (tok_ctr < 1)) {
-		free(cp);
-		return; /* Not a valid escape code */
-	}
-	if (tok_ctr == 1) { /* must be a reset */
-		if (strlen(toklist[0]) != 1) return;
-		if (toklist[0][0] == '0') {
-			*reset = 1;
-		}
-		free(cp);
-		return;
-	}
-	for (i = 0; i < tok_ctr; i++) {
-		for (j = 0; j < strlen(toklist[i]); j++){
-			if (toklist[i][j] < '0' || toklist[i][j] > '9') {
-				free(cp);
-				return;
-			}
-		}
-		arglist[i] = atoi(toklist[i]);
-	}
-	if (tok_ctr == 3) {
-		if (!(
-					(arglist[1] == 5) &&
-					((arglist[0] == 38) || (arglist[0] == 48)) &&
-					(arglist[2] >= 16) &&
-					(arglist[2] <= 255)
-			 )) {
-			free(cp);
-			return;
-		} else {
-			if (arglist[0] == 38) {
-				ansicolor_GetAnsiColor(arglist[2], fg);
-			} else {
-				ansicolor_GetAnsiColor(arglist[2], bg);
-			}
-			free(cp);
-			return;
-		}
-	} else { /* if tok_ctr == 2 */
-		if (!(
-					((arglist[0] == 0) || (arglist[0] == 1)) &&
-					(((arglist[1] >= 30) && (arglist[1] <= 37)) || ((arglist[1] >= 40) && (arglist[1] <= 47)))
-			 )) {
-			free(cp);
-			return;
-		}
-		r = arglist[0];
-		c = arglist[1];
-		if (c > 37) {
-			c -= 10;
-			*bg = standardcolors[r][c-30];
-		} else {
-			*fg = standardcolors[r][c-30];
-		}
-		free(cp);
-	}
-}
+    int i, arg, tmp;
+    unsigned long col = 0x0;
+    if (argc == 0) {
+        *reset = 1;
+        return;
+    }
+    for (i = 0; i < argc; i ++) {
+        arg = args[i];
+        if (arg >= 30 && arg <= 37) {
+            *fg = standardcolors[1][arg-30];
+        } else if (arg >= 40 && arg <= 47) {
+            *bg = standardcolors[0][arg-40];
+        } else if (arg == 38 || arg == 48) {
+            i ++;
+            if (i >= argc) break;
 
-void
-ansicolor_GetAnsiColor(int escapecode, unsigned long *color){
-	unsigned long steps[6] = {
-		0x00, 0x5f, 0x87, 0xaf, 0xd6, 0xff,
-	};
-	int i, panel, cell, col, row, val;
-	int cmin = 16;
-	int cmax = 231;
-	int gmax = 255;
-	int n = escapecode;
+            if (args[i] == 5) {
+                i++;
+                if (i >= argc) break;
+                tmp = args[i];
+                if (tmp >= 0x08 && tmp <= 0x0F) {
+                    // 0x08-0x0F:  high intensity colors (as in ESC [ 90..97 m)
+                    tmp -= 0x08; // TODO: support high-intensity colors
+                }
+                if (tmp >= 0x00 && tmp <= 0x07) {
+                    // 0x00-0x07:  standard colors (as in ESC [ 30..37 m)
+                    if (arg == 38) col = standardcolors[1][tmp];
+                    else           col = standardcolors[0][tmp];
+                } else if (tmp >= 0x10 && tmp <= 0xE7) {
+                    // 0x10-0xE7:  6*6*6=216 colors: 16 + 36*r + 6*g + b (0≤r,g,b≤5)
+                    tmp -= 16;
+                    col = 0;
+                    col |= ( (tmp   )/36 > 0 ? 55+((tmp   )/36)*40 : 0) << 16;
+                    col |= ( (tmp%36)/ 6 > 0 ? 55+((tmp%36)/ 6)*40 : 0) << 8;
+                    col |= ( (tmp% 6)    > 0 ? 55+((tmp% 6)   )*40 : 0);
+                } else if (tmp >= 0xE8 && tmp <= 0xFF) {
+                    // 0xE8-0xFF:  grayscale from black to white in 24 steps
+                    col = 0;
+                    tmp = (tmp - 232) * 10 + 8;
+                    col |= tmp << 16;
+                    col |= tmp << 8;
+                    col |= tmp;
+                }
+            } else if (args[i] == 2) {
+                if (i + 4 >= argc) {
+                    break;
+                }
+                col = 0;
+                col |= (args[i+1]&0xFF) << 16;
+                col |= (args[i+2]&0xFF) << 8;
+                col |= (args[i+3]&0xFF);
+                i += 3;
+            } else {
+                break;
+            }
 
-	if (n < cmin) {
-		return;
-	} else if (n > gmax) {
-		return;
-	} else if (n <= cmax) {
-		i = n - 15;
-		panel = i / 36;
-		cell = i % 36;
-		if (cell == 0) {
-			cell = 36;
-			panel -= 1;
-		}
-		col = cell / 6;
-		row = cell % 6;
-		if (row == 0) {
-			col -= 1;
-			row = 5;
-		} else {
-			row -= 1;
-		}
-		*color = (steps[panel] << 16) | (steps[col] << 8) | (steps[row]);
-	} else {
-		val = ((10*(n-232))+8);
-		*color = (val << 16) | (val << 8) | (val);
-	}
+            if (arg == 38) *fg = col;
+            else           *bg = col;
+        }
+    }
 }
 
 void
