@@ -2420,7 +2420,7 @@ ansicolor_ParseAnsiEsc(char *seq, int *reset, unsigned long *fg, unsigned long *
                     col |= tmp;
                 }
             } else if (args[i] == 2) {
-                if (i + 4 >= argc) {
+                if (i + 3 >= argc) {
                     break;
                 }
                 col = 0;
