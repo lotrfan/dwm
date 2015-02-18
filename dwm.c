@@ -2372,6 +2372,7 @@ ansicolor_ParseAnsiEsc(char *seq, int *reset, unsigned long *fg, unsigned long *
         }
         cur ++;
     }
+    argc ++;
 
     int i, arg, tmp;
     unsigned long col = 0x0;
