@@ -246,7 +246,7 @@ static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
 static unsigned int ansicolor_getwidth(const char *buf);
 struct rgbcolor {
-    short red, green, blue;
+    unsigned char red, green, blue;
 };
 static void ansicolor_ParseAnsiEsc(char *seq, int *reset, struct rgbcolor **fg, struct rgbcolor **bg);
 static void drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text);
@@ -2488,8 +2488,7 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 						strncpy(tmp, start, c - start + 1);
 						tmp[c - start + 1] = '\0';
 						tmp[c - start] = '\0';
-						/* drw_text_noborder(drw, x, y, w, h, tmp, 0); */
-						tmpw = drw_text(drw, x, y, w, h, tmp, 0) - x;
+						tmpw = drw_text_noborder(drw, x, y, w, h, tmp, 0) - x;
 						x += tmpw + 0;
 						w -= tmpw;
 					}

@@ -56,7 +56,7 @@ unsigned int drw_font_getexts_width(Fnt *font, const char *text, unsigned int le
 
 /* Colour abstraction */
 Clr *drw_clr_create(Drw *drw, const char *clrname);
-Clr *drw_clr_create_rgb(Drw *drw, unsigned short red, unsigned short green, unsigned short blue);
+Clr *drw_clr_create_rgb(Drw *drw, unsigned char red, unsigned char green, unsigned char blue);
 void drw_clr_free(Clr *clr);
 
 /* Cursor abstraction */
@@ -70,6 +70,7 @@ void drw_setscheme(Drw *drw, ClrScheme *scheme);
 /* Drawing functions */
 void drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int empty, int invert);
 int drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int invert);
+int drw_text_noborder(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int invert);
 
 /* Map functions */
 void drw_map(Drw *drw, Window win, int x, int y, unsigned int w, unsigned int h);
