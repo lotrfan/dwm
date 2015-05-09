@@ -190,6 +190,30 @@ drw_clr_create(Drw *drw, const char *clrname) {
 	return clr;
 }
 
+Clr *
+drw_clr_create_rgb(Drw *drw, unsigned short red, unsigned short green, unsigned short blue) {
+	Clr *clr;
+	Colormap cmap;
+	Visual *vis;
+    XRenderColor rc;
+    rc.red = red;
+    rc.green = green;
+    rc.blue = blue;
+    rc.alpha = 0xFF;
+
+	if(!drw)
+		return NULL;
+	clr = (Clr *)calloc(1, sizeof(Clr));
+	if(!clr)
+		return NULL;
+	cmap = DefaultColormap(drw->dpy, drw->screen);
+	vis = DefaultVisual(drw->dpy, drw->screen);
+	if(!XftColorAllocValue(drw->dpy, vis, cmap, &rc, &clr->rgb))
+		die("error, cannot allocate color '(%hu, %hu, %hu)'\n", red, green, blue);
+	clr->pix = clr->rgb.pixel;
+	return clr;
+}
+
 void
 drw_clr_free(Clr *clr) {
 	if(clr)

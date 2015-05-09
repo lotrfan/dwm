@@ -2,23 +2,22 @@
 
 /* appearance */
 /* Custom font at beginning for dwmstatus output */
-static const char fonts[][150]            = {
-    "-*-stlarch-medium-r-*-*-10-*-*-*-*-*-*-*" "," "-*-profont-medium-*-*-*-12-*-*-*-*-*-*-*",
-    "-*-stlarch-medium-r-*-*-10-*-*-*-*-*-*-*" "," "-*-terminus-medium-r-*-*-12-*-*-*-*-*-*-*",
-    "-*-stlarch-medium-r-*-*-10-*-*-*-*-*-*-*" "," "-*-terminus-medium-r-*-*-13-*-*-*-*-*-*-*",
+static const char *fonts[] = {
+    "Sans:size=10.5",
+    "VL Gothic:size=10.5",
+    "WenQuanYi Micro Hei:size=10.5",
 };
-static       char font[sizeof(fonts[0])]  = "";
-static const char normbordercolor[]       = "#444444";
-static const char normbgcolor[]           = "#222222";
-static const char normfgcolor[]           = "#bbbbbb";
-static const char selbordercolor[]        = "#005577";
-static const char selbgcolor[]            = "#005577";
-static const char selfgcolor[]            = "#eeeeee";
-
-static const unsigned int borderpx        = 1;        /* border pixel of windows */
-static const unsigned int snap            = 32;       /* snap pixel */
-static const Bool showbar                 = True;     /* False means no bar */
-static const Bool showbbar                = False;    /* False means no bar */
+static const char dmenufont[] = "-*-terminus-medium-r-*-*-16-*-*-*-*-*-*-*";
+static const char normbordercolor[] = "#444444";
+static const char normbgcolor[]     = "#222222";
+static const char normfgcolor[]     = "#bbbbbb";
+static const char selbordercolor[]  = "#005577";
+static const char selbgcolor[]      = "#005577";
+static const char selfgcolor[]      = "#eeeeee";
+static const unsigned int borderpx  = 1;        /* border pixel of windows */
+static const unsigned int snap      = 32;       /* snap pixel */
+static const Bool showbar           = True;     /* False means no bar */
+static const Bool showbbar          = False;    /* False means no bar */
 
 /* False means using the scroll wheel on a window will not change focus */
 static const Bool focusonwheelscroll = False;
@@ -33,6 +32,10 @@ static const unsigned int   bar_padding           = 4;   /* in pixels, should be
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
+	/* xprop(1):
+	 *	WM_CLASS(STRING) = instance, class
+	 *	WM_NAME(STRING) = title
+	 */
 	/* class          , instance              , title               , tags mask , isfloating , monitor */
 	{ "Pithos"        , NULL                  , NULL                , 1 << 8    , False      , 0 } ,
 	{ "CvbApp"        , "cvPopupWindow_popup" , NULL                , 0         , True       , 0 } , /* For hdl_designer */
@@ -69,14 +72,14 @@ static const Layout layouts[] = {
 /* commands */
 /* dmenu-ish stuff */
 static char dmenumon[2]                          = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[]                    = { "dmenu_run", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *calccmd[]                     = { "dmenu_calc", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *passcmd[]                     = { "/home/jeffrey/bin/dmenu_pass", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *srcmd[]                       = { "/home/jeffrey/bin/dmenu_sr", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *raisecmd[]                    = { "dmenu_raise", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *firefoxcmd[]                  = { "/home/jeffrey/bin/dmenu_firefox", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *abducosessioncmd[]            = { "/home/jeffrey/bin/dmenu_abduco", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *menucmd[]                     = { "dmenu_menu", "-i", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *dmenucmd[]                    = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *calccmd[]                     = { "dmenu_calc", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *passcmd[]                     = { "/home/jeffrey/bin/dmenu_pass", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *srcmd[]                       = { "/home/jeffrey/bin/dmenu_sr", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *raisecmd[]                    = { "dmenu_raise", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *firefoxcmd[]                  = { "/home/jeffrey/bin/dmenu_firefox", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *abducosessioncmd[]            = { "/home/jeffrey/bin/dmenu_abduco", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *menucmd[]                     = { "dmenu_menu", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 /* Spawn clients                                 = */
 static const char *termcmd[]                     = { "st-dvtm", NULL };
 
@@ -99,8 +102,8 @@ static Key keys[] = {
 	{ MODKEY                         , XK_o                    , spawn          , {.v = menucmd } }            ,
 
 	/* Find keys with xev */
-	{ Mod4Mask|ControlMask           , XK_KP_Add               , font_next      , {.i = +1 } }                 ,
-	{ Mod4Mask|ControlMask           , XK_KP_Subtract          , font_next      , {.i = -1 } }                 ,
+	//{ Mod4Mask|ControlMask           , XK_KP_Add               , font_next      , {.i = +1 } }                 ,
+	//{ Mod4Mask|ControlMask           , XK_KP_Subtract          , font_next      , {.i = -1 } }                 ,
 
 
 	{ MODKEY                         , XK_b                    , togglebar      , {.i = 0} }                   ,

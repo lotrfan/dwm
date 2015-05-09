@@ -245,7 +245,10 @@ static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
 static unsigned int ansicolor_getwidth(const char *buf);
-static void ansicolor_ParseAnsiEsc(char *seq, int *reset, unsigned long *fg, unsigned long *bg);
+struct rgbcolor {
+    short red, green, blue;
+};
+static void ansicolor_ParseAnsiEsc(char *seq, int *reset, struct rgbcolor **fg, struct rgbcolor **bg);
 static void drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text);
 static void pushup(const Arg *arg);
 static void pushdown(const Arg *arg);
@@ -2354,97 +2357,103 @@ ansicolor_getwidth(const char *buf) {
 }
 
 void
-ansicolor_ParseAnsiEsc(char *seq, int *reset, unsigned long *fg, unsigned long *bg) {
-	static unsigned long standardcolors[2][8] = {
-		{0x000000,0x800000,0x008000,0x808000,0x000080,0x800080,0x008080,0xc0c0c0},
-		{0x808080,0xff0000,0x00ff00,0xffff00,0x0000ff,0xff00ff,0x00ffff,0xffffff}
+ansicolor_ParseAnsiEsc(char *seq, int *reset, struct rgbcolor **fg, struct rgbcolor **bg) {
+	static struct rgbcolor sfg;
+	static struct rgbcolor sbg;
+	static struct rgbcolor standardcolors[2][8] = {
+		{ {0x00, 0x00, 0x00} , {0x80, 0x00, 0x00} , {0x00, 0x80, 0x00}, {0x80, 0x80, 0x00}, {0x00, 0x00, 0x80}, {0x80, 0x00, 0x80}, {0x00, 0x80, 0x80}, {0xc0, 0xc0, 0xc0} },
+		{ {0x80, 0x80, 0x80} , {0xff, 0x00, 0x00} , {0x00, 0xff, 0x00}, {0xff, 0xff, 0x00}, {0x00, 0x00, 0xff}, {0xff, 0x00, 0xff}, {0x00, 0xff, 0xff}, {0xff, 0xff, 0xff} }
 	};
 
-    int args[10];
-    int argc = 0;
-    args[argc] = 0;
+	int args[10];
+	int argc = 0;
+	args[argc] = 0;
 
-    *reset = 0;
+	*fg = *bg = NULL;
 
-    char *cur = seq;
-    while (*cur && *cur != 'm') {
-        if (*cur >= '0' && *cur <= '9') {
-            args[argc] = (args[argc]*10) + (*cur - '0');
-        } else if (*cur == ';') {
-            argc ++;
-            args[argc] = 0;
-        } else {
-            return; // not a valid number
-        }
-        if (argc >= 10) {
-            return;
-        }
-        cur ++;
-    }
-    argc ++;
+	*reset = 0;
 
-    int i, arg, tmp;
-    unsigned long col = 0x0;
-    if (argc == 0) {
-        *reset = 1;
-        return;
-    }
-    for (i = 0; i < argc; i ++) {
-        arg = args[i];
-        if (arg == 0) {
-            *reset = 1;
-        } else if (arg >= 30 && arg <= 37) {
-            *fg = standardcolors[1][arg-30];
-        } else if (arg >= 40 && arg <= 47) {
-            *bg = standardcolors[0][arg-40];
-        } else if (arg == 38 || arg == 48) {
-            i ++;
-            if (i >= argc) break;
+	char *cur = seq;
+	while (*cur && *cur != 'm') {
+		if (*cur >= '0' && *cur <= '9') {
+			args[argc] = (args[argc]*10) + (*cur - '0');
+		} else if (*cur == ';') {
+			argc ++;
+			args[argc] = 0;
+		} else {
+			return; // not a valid number
+		}
+		if (argc >= 10) {
+			return;
+		}
+		cur ++;
+	}
+	argc ++;
 
-            if (args[i] == 5) {
-                i++;
-                if (i >= argc) break;
-                tmp = args[i];
-                if (tmp >= 0x08 && tmp <= 0x0F) {
-                    // 0x08-0x0F:  high intensity colors (as in ESC [ 90..97 m)
-                    tmp -= 0x08; // TODO: support high-intensity colors
-                }
-                if (tmp >= 0x00 && tmp <= 0x07) {
-                    // 0x00-0x07:  standard colors (as in ESC [ 30..37 m)
-                    if (arg == 38) col = standardcolors[1][tmp];
-                    else           col = standardcolors[0][tmp];
-                } else if (tmp >= 0x10 && tmp <= 0xE7) {
-                    // 0x10-0xE7:  6*6*6=216 colors: 16 + 36*r + 6*g + b (0≤r,g,b≤5)
-                    tmp -= 16;
-                    col = 0;
-                    col |= ( (tmp   )/36 > 0 ? 55+((tmp   )/36)*40 : 0) << 16;
-                    col |= ( (tmp%36)/ 6 > 0 ? 55+((tmp%36)/ 6)*40 : 0) << 8;
-                    col |= ( (tmp% 6)    > 0 ? 55+((tmp% 6)   )*40 : 0);
-                } else if (tmp >= 0xE8 && tmp <= 0xFF) {
-                    // 0xE8-0xFF:  grayscale from black to white in 24 steps
-                    col = 0;
-                    tmp = (tmp - 232) * 10 + 8;
-                    col |= tmp << 16;
-                    col |= tmp << 8;
-                    col |= tmp;
-                }
-            } else if (args[i] == 2) {
-                if (i + 3 >= argc) {
-                    break;
-                }
-                col = 0;
-                col |= (args[i+1]&0xFF) << 16;
-                col |= (args[i+2]&0xFF) << 8;
-                col |= (args[i+3]&0xFF);
-                i += 3;
-            } else {
-                break;
-            }
+	int i, arg, tmp;
+	struct rgbcolor col = {0x0, 0x0, 0x0};
+	if (argc == 0) {
+		*reset = 1;
+		return;
+	}
+	for (i = 0; i < argc; i ++) {
+		arg = args[i];
+		if (arg == 0) {
+			*reset = 1;
+		} else if (arg >= 30 && arg <= 37) {
+			*fg = &standardcolors[1][arg-30];
+		} else if (arg >= 40 && arg <= 47) {
+			*bg = &standardcolors[0][arg-40];
+		} else if (arg == 38 || arg == 48) {
+			i ++;
+			if (i >= argc) break;
 
-            if (arg == 38) *fg = col;
-            else           *bg = col;
-        }
-    }
+			if (args[i] == 5) {
+				i++;
+				if (i >= argc) break;
+				tmp = args[i];
+				if (tmp >= 0x08 && tmp <= 0x0F) {
+					// 0x08-0x0F:  high intensity colors (as in ESC [ 90..97 m)
+					tmp -= 0x08; // TODO: support high-intensity colors
+				}
+				if (tmp >= 0x00 && tmp <= 0x07) {
+					// 0x00-0x07:  standard colors (as in ESC [ 30..37 m)
+					if (arg == 38) col = standardcolors[1][tmp];
+					else           col = standardcolors[0][tmp];
+				} else if (tmp >= 0x10 && tmp <= 0xE7) {
+					// 0x10-0xE7:  6*6*6=216 colors: 16 + 36*r + 6*g + b (0≤r,g,b≤5)
+					tmp -= 16;
+					col.red   = (tmp   )/36 > 0 ? 55+((tmp   )/36)*40 : 0;
+					col.green = (tmp%36)/ 6 > 0 ? 55+((tmp%36)/ 6)*40 : 0;
+					col.blue  = (tmp% 6)    > 0 ? 55+((tmp% 6)   )*40 : 0;
+				} else if (tmp >= 0xE8 && tmp <= 0xFF) {
+					// 0xE8-0xFF:  grayscale from black to white in 24 steps
+					tmp = (tmp - 232) * 10 + 8;
+					col.red   = tmp;
+					col.green = tmp;
+					col.blue  = tmp;
+				}
+			} else if (args[i] == 2) {
+				if (i + 3 >= argc) {
+					break;
+				}
+				col.red   = args[i+1]&0xFF;
+				col.green = args[i+2]&0xFF;
+				col.blue  = args[i+3]&0xFF;
+				i += 3;
+			} else {
+				break;
+			}
+
+			if (arg == 38) {
+				sfg = col;
+				*fg = &sfg;
+			} else {
+				sbg = col;
+				*bg = &sbg;
+			}
+		}
+	}
 }
 
 void
@@ -2452,8 +2461,12 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 	if(!drw || !drw->scheme)
 		return;
 
-	const unsigned long orig_fg = drw->scheme->fg->rgb;
-	const unsigned long orig_bg = drw->scheme->bg->rgb;
+	ClrScheme *orig_scheme = drw->scheme;
+	ClrScheme scheme = *orig_scheme;
+	drw->scheme = &scheme;
+
+	struct rgbcolor *fg = NULL, *bg = NULL;
+
 	static char tmp[STATUS_BUF_LEN] = {0};
 	const char *c;
 	const char *start; /* Where the text segment started */
@@ -2475,9 +2488,8 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 						strncpy(tmp, start, c - start + 1);
 						tmp[c - start + 1] = '\0';
 						tmp[c - start] = '\0';
-						tmpw = drw_font_getexts_width(drw->font, tmp, strlen(tmp));
 						/* drw_text_noborder(drw, x, y, w, h, tmp, 0); */
-						drw_text(drw, x, y, w, h, tmp, 0);
+						tmpw = drw_text(drw, x, y, w, h, tmp, 0) - x;
 						x += tmpw + 0;
 						w -= tmpw;
 					}
@@ -2486,10 +2498,21 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 					tmp[mpos - (c + 2)] = '\0';
 					if (*(c + 1) == '[') {
 						// color change
-						ansicolor_ParseAnsiEsc(tmp, &reset, &(drw->scheme->fg->rgb), &(drw->scheme->bg->rgb));
+						fg = bg = NULL;
+						ansicolor_ParseAnsiEsc(tmp, &reset, &fg, &bg);
 						if (reset) {
-							drw->scheme->fg->rgb = orig_fg;
-							drw->scheme->bg->rgb = orig_bg;
+							drw->scheme->fg = orig_scheme->fg;
+							drw->scheme->bg = orig_scheme->bg;
+						} else if (fg) {
+							if (drw->scheme->fg != orig_scheme->fg) {
+								drw_clr_free(drw->scheme->fg);
+							}
+							drw->scheme->fg = drw_clr_create_rgb(drw, fg->red, fg->green, fg->blue);
+						} else if (bg) {
+							if (drw->scheme->bg != orig_scheme->bg) {
+								drw_clr_free(drw->scheme->bg);
+							}
+							drw->scheme->bg = drw_clr_create_rgb(drw, bg->red, bg->green, bg->blue);
 						}
 					} else {
 						// bar graph
@@ -2506,8 +2529,8 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 								percent = 0;
 							}
 
-							unsigned long old_fg = drw->scheme->fg->rgb;
-							unsigned long old_bg = drw->scheme->bg->rgb;
+							Clr *old_fg = drw->scheme->fg;
+							Clr *old_bg = drw->scheme->bg;
 
 							x += bar_padding/2;
 							if (vertical) {
@@ -2518,14 +2541,14 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 								// Draw the background
 								drw_text(drw, x, 0, tmpw, bh, NULL, 0);
 
-								drw->scheme->fg->rgb = old_bg;
-								drw->scheme->bg->rgb = old_fg;
+								drw->scheme->fg = old_bg;
+								drw->scheme->bg = old_fg;
 
 								// Draw the border (in the forground color)
 								drw_text(drw, x, (bh - height)/2, tmpw, height, NULL, 0);
 
-								drw->scheme->fg->rgb = old_fg;
-								drw->scheme->bg->rgb = old_bg;
+								drw->scheme->fg = old_fg;
+								drw->scheme->bg = old_bg;
 
 								// Draw the unfilled part of the bar (in the background color)
 								drw_text(drw, x + 1, (bh - (height - 2))/2, tmpw - 2, (height - 2) - filled_height, NULL, 0);
@@ -2538,20 +2561,20 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 								}
 								tmp[bar_horizontal_width] = '\0';
 
-								tmpw = drw_font_getexts_width(drw->font, tmp, strlen(tmp));
+								tmpw = drw_font_getexts_width(drw->fonts[0], tmp, strlen(tmp));
 								int filled_width = percent*(float)(tmpw - 2);
 
 								// Draw the background
 								drw_text(drw, x, 0, tmpw, bh, NULL, 0);
 
-								drw->scheme->fg->rgb = old_bg;
-								drw->scheme->bg->rgb = old_fg;
+								drw->scheme->fg = old_bg;
+								drw->scheme->bg = old_fg;
 
 								// Draw the border (in the forground color)
 								drw_text(drw, x, (bh - bar_horizontal_height)/2, tmpw, bar_horizontal_height, NULL, 0);
 
-								drw->scheme->fg->rgb = old_fg;
-								drw->scheme->bg->rgb = old_bg;
+								drw->scheme->fg = old_fg;
+								drw->scheme->bg = old_bg;
 
 								// Draw the unfilled part of the bar (in the background color)
 								drw_text(drw, x + 1 + filled_width, (bh - (bar_horizontal_height - 2))/2, (tmpw - 2) - filled_width, bar_horizontal_height - 2, NULL, 0);
@@ -2574,14 +2597,18 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 	if ((c - start)) {
 		strncpy(tmp, start, c - start + 1);
 		tmp[c - start + 1] = '\0';
-		tmpw = drw_font_getexts_width(drw->font, tmp, strlen(tmp));
 		/* drw_text_noborder(drw, x, y, w, h, tmp, 0); */
-		drw_text(drw, x, y, w, h, tmp, 0);
+		tmpw = drw_text(drw, x, y, w, h, tmp, 0) - x;
 		x += tmpw;
 		w -= tmpw;
 	}
-	drw->scheme->fg->rgb = orig_fg;
-	drw->scheme->bg->rgb = orig_bg;
+	if (drw->scheme->fg != orig_scheme->fg) {
+		drw_clr_free(drw->scheme->fg);
+	}
+	if (drw->scheme->bg != orig_scheme->bg) {
+		drw_clr_free(drw->scheme->bg);
+	}
+	drw->scheme = orig_scheme;
 }
 
 static Client *
