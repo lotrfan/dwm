@@ -3,9 +3,8 @@
 /* appearance */
 /* Custom font at beginning for dwmstatus output */
 static const char *fonts[] = {
-    "Sans:size=10.5",
-    "VL Gothic:size=10.5",
-    "WenQuanYi Micro Hei:size=10.5",
+    "Meslo LG S DZ for Powerline:pixelsize=13",
+    "FontAwesome:pixelsize=13",
 };
 static const char dmenufont[] = "-*-terminus-medium-r-*-*-16-*-*-*-*-*-*-*";
 static const char normbordercolor[] = "#444444";
@@ -50,11 +49,11 @@ static const Bool resizehints = False; /* True means respect size hints in tiled
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "\uE002",   tile },
-	{ "\uE001",   NULL },
+	{ "[T]",   tile },
+	{ "><>",   NULL },
 	{ "[M]",      monocle },
-	{ "\uE003",   bstack },
-	{ "\uE004",   bstackhoriz },
+	{ "[B]",   bstack },
+	{ "[H]",   bstackhoriz },
 	{ NULL ,      NULL },
 };
 
