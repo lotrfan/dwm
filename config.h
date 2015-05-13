@@ -72,7 +72,7 @@ static const Layout layouts[] = {
 /* dmenu-ish stuff */
 static char dmenumon[2]                          = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[]                    = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *calccmd[]                     = { "dmenu_calc", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *classcmd[]                    = { "dmenu_class", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *passcmd[]                     = { "/home/jeffrey/bin/dmenu_pass", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *srcmd[]                       = { "/home/jeffrey/bin/dmenu_sr", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *googlecmd[]                       = { "/home/jeffrey/bin/dmenu_google", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
@@ -94,7 +94,7 @@ static Key keys[] = {
 	/* modifier                      , key                     , function       , argument */
 	{ MODKEY                         , XK_space                , spawn          , {.v = dmenucmd } }           ,
 	{ MODKEY                         , XK_a                    , spawn          , {.v = passcmd } }            ,
-	{ MODKEY                         , XK_c                    , spawn          , {.v = calccmd } }            ,
+	{ MODKEY                         , XK_c                    , spawn          , {.v = classcmd } }            ,
 	{ MODKEY                         , XK_s                    , spawn          , {.v = srcmd } }              ,
 	{ MODKEY                         , XK_g                    , spawn          , {.v = googlecmd } }          ,
 	{ MODKEY                         , XK_w                    , spawn          , {.v = raisecmd } }           ,
