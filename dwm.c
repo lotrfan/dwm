@@ -2500,6 +2500,12 @@ drawstatus(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *t
 						fg = bg = NULL;
 						ansicolor_ParseAnsiEsc(tmp, &reset, &fg, &bg);
 						if (reset) {
+							if (drw->scheme->fg != orig_scheme->fg) {
+								drw_clr_free(drw->scheme->fg);
+							}
+							if (drw->scheme->bg != orig_scheme->bg) {
+								drw_clr_free(drw->scheme->bg);
+							}
 							drw->scheme->fg = orig_scheme->fg;
 							drw->scheme->bg = orig_scheme->bg;
 						} else if (fg) {
