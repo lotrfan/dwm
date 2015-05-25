@@ -70,16 +70,17 @@ static const Layout layouts[] = {
 
 /* commands */
 /* dmenu-ish stuff */
+#define dmenu_args "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor
 static char dmenumon[2]                          = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[]                    = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *classcmd[]                    = { "dmenu_class", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *passcmd[]                     = { "/home/jeffrey/bin/dmenu_pass", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *srcmd[]                       = { "/home/jeffrey/bin/dmenu_sr", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *googlecmd[]                       = { "/home/jeffrey/bin/dmenu_google", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *raisecmd[]                    = { "dmenu_raise", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *firefoxcmd[]                  = { "/home/jeffrey/bin/dmenu_firefox", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *abducosessioncmd[]            = { "/home/jeffrey/bin/dmenu_abduco", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *menucmd[]                     = { "dmenu_menu", "-i", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *dmenucmd[]                    = { "dmenu_run", dmenu_args, NULL };
+static const char *classcmd[]                    = { "dmenu_class", dmenu_args, NULL };
+static const char *passcmd[]                     = { "/home/jeffrey/bin/dmenu_pass", "-i", dmenu_args, NULL };
+static const char *srcmd[]                       = { "/home/jeffrey/bin/dmenu_sr", "-i", dmenu_args, NULL };
+static const char *googlecmd[]                       = { "/home/jeffrey/bin/dmenu_google", "-i", dmenu_args, NULL };
+static const char *raisecmd[]                    = { "dmenu_raise", "-i", dmenu_args, NULL };
+static const char *firefoxcmd[]                  = { "/home/jeffrey/bin/dmenu_firefox", "-i", dmenu_args, NULL };
+static const char *abducosessioncmd[]            = { "/home/jeffrey/bin/dmenu_abduco", "-i", dmenu_args, NULL };
+static const char *menucmd[]                     = { "dmenu_menu", "-i", dmenu_args, NULL };
 /* Spawn clients                                 = */
 static const char *termcmd[]                     = { "st-dvtm", NULL };
 
