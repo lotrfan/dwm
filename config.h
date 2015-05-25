@@ -70,7 +70,7 @@ static const Layout layouts[] = {
 
 /* commands */
 /* dmenu-ish stuff */
-#define dmenu_args "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor
+#define dmenu_args "-s", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor
 static char dmenumon[2]                          = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[]                    = { "dmenu_run", dmenu_args, NULL };
 static const char *classcmd[]                    = { "dmenu_class", dmenu_args, NULL };
