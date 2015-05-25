@@ -6,7 +6,6 @@ static const char *fonts[] = {
     "Meslo LG S DZ for Powerline:pixelsize=13",
     "FontAwesome:pixelsize=13",
 };
-static const char dmenufont[] = "-*-terminus-medium-r-*-*-16-*-*-*-*-*-*-*";
 static const char normbordercolor[] = "#444444";
 static const char normbgcolor[]     = "#222222";
 static const char normfgcolor[]     = "#bbbbbb";
@@ -70,7 +69,7 @@ static const Layout layouts[] = {
 
 /* commands */
 /* dmenu-ish stuff */
-#define dmenu_args "-s", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor
+#define dmenu_args "-s", dmenumon, "-fn", fonts[0], "-nb", normbgcolor, "-nf", normfgcolor,"-sb", selbgcolor, "-sf", selfgcolor
 static char dmenumon[2]                          = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[]                    = { "dmenu_run", dmenu_args, NULL };
 static const char *classcmd[]                    = { "dmenu_class", dmenu_args, NULL };
