@@ -259,6 +259,7 @@ static void bstackhoriz(Monitor *m);
 /* variables */
 static const char broken[] = "broken";
 static char stext[2*STATUS_BUF_LEN];
+static int stext_width = 0;
 static char bstext[STATUS_BUF_LEN];
 static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
@@ -464,13 +465,12 @@ buttonpress(XEvent *e) {
 		}
 		else if(ev->x < x + blw)
 			click = ClkLtSymbol;
-		else if(ev->x > selmon->ww - TEXTW(stext))
+		else if(ev->x > selmon->ww - stext_width)
 			click = ClkStatusText;
 		else
 			click = ClkWinTitle;
 	}
 	else if((c = wintoclient(ev->window))) {
-		focus(c);
 		if (focusonwheelscroll || (ev->button != Button4 && ev->button != Button5))
 			focus(c);
 		XAllowEvents(dpy, ReplayPointer, CurrentTime);
@@ -778,7 +778,7 @@ drawbar(Monitor *m) {
 	x += w;
 	xx = x;
 	if(m == selmon) { /* status is only drawn on selected monitor */
-		w = TEXTW_ANSIESCAPE(stext);
+		stext_width = w = TEXTW_ANSIESCAPE(stext);
 		x = m->ww - w;
 		if(x < xx) {
 			x = xx;
